@@ -127,6 +127,7 @@ textarea{min-height:240px;resize:vertical;line-height:1.55}
 .kb{display:flex;flex-direction:column;gap:6px;width:100%}
 .kb .kr{display:flex;gap:4px;justify-content:center}
 .kb button{flex:1 1 0;max-width:42px;min-width:0;height:50px;border-radius:7px;background:var(--panel2);font-weight:700;text-transform:uppercase;font-size:.95rem}
+.kb button:disabled{opacity:.3;cursor:default}
 .kb button.wide{max-width:66px;flex:1.6 1 0;font-size:.72rem}
 /* code breaker */
 .code-hist{display:flex;flex-direction:column;gap:6px}
@@ -276,7 +277,7 @@ const SENTENCES=[
 "Make sure you send the form before Friday.",
 ];
 const READINGS=[
-{t:"The Fog Oases of the Peruvian Coast",tag:"Ciencias naturales · 4 preguntas",
+{t:"The Fog Oases of the Peruvian Coast",lv:"B2",tag:"Ciencias naturales",
 p:["Along the desert coast of Peru, where rain may not fall for years, small islands of green appear each winter. These ecosystems, known as lomas, depend not on rain but on fog. From June to October, cool ocean currents chill the air above the sea, producing a dense layer of low cloud that local people call garúa. When this cloud meets the coastal hills, tiny droplets collect on leaves and stems and drip into the soil.",
 "The result is surprising biodiversity. Researchers have recorded hundreds of plant species in the lomas, and some of them grow nowhere else on Earth. Birds, insects and small mammals follow the seasonal bloom, and for centuries herders brought their animals to graze on the hills.",
 "Today the lomas face pressure from urban expansion, particularly around large cities. Some communities have responded by installing fog-catching nets, which capture moisture and redirect it to reforestation projects. Supporters argue that such nets could restore degraded slopes, although critics note that nets alone cannot replace the complex vegetation that once trapped water naturally. What is clear is that the lomas show how life can adapt to extreme scarcity, thereby offering lessons for other dry regions."],
@@ -284,7 +285,7 @@ qs:[{q:"What is the main source of water for the lomas?",o:["Seasonal rainfall",
 {q:"The word “scarcity” in the last paragraph is closest in meaning to:",o:["abundance","shortage","danger","variety"],a:1,w:"Scarcity = escasez (shortage). Se relaciona con 'scarce'."},
 {q:"Why do critics doubt the fog-catching nets?",o:["They are too expensive to install","They damage native plants","They cannot fully replace the natural vegetation","They only work in summer"],a:2,w:"Último párrafo: los críticos dicen que las redes solas no reemplazan la vegetación compleja."},
 {q:"What can be inferred about the lomas outside the winter months?",o:["They are greener than in winter","They receive much less moisture","They are often flooded","They are used to grow crops"],a:1,w:"Pregunta de inferencia: la garúa ocurre de junio a octubre, así que el resto del año hay mucha menos humedad."}]},
-{t:"Why Spacing Beats Cramming",tag:"Psicología · 4 preguntas",
+{t:"Why Spacing Beats Cramming",lv:"B2",tag:"Psicología",
 p:["Students often prepare for exams by studying intensively the night before. This strategy, known as cramming, can produce reasonable results on a test the next morning. However, decades of research in cognitive psychology suggest that the information fades quickly afterward.",
 "An alternative is spaced practice: reviewing the same material several times with gaps between sessions. Each time a learner returns to a fact that is starting to fade, retrieving it requires effort, and this effort appears to strengthen memory. The phenomenon is sometimes called “desirable difficulty”: a task that feels harder in the moment but yields better long-term learning.",
 "Spacing works especially well when combined with self-testing. Rather than rereading notes, learners who try to recall answers from memory tend to remember more weeks later. Despite this evidence, many students remain reluctant to change their habits, partly because rereading feels productive while testing exposes what they do not yet know."],
@@ -292,6 +293,75 @@ qs:[{q:"What is the main idea of the passage?",o:["Cramming is the most efficien
 {q:"In the passage, “desirable difficulty” refers to:",o:["a test that is unfair","effort that ends up improving learning","a subject that is boring","a speed-reading technique"],a:1,w:"Se define como una tarea que se siente más difícil pero produce mejor aprendizaje."},
 {q:"According to the passage, why are many students reluctant to change?",o:["Self-testing is expensive","Rereading feels productive","Teachers do not allow spacing","Spacing takes several years"],a:1,w:"Última oración: rereading feels productive, mientras que el test muestra lo que aún no saben."},
 {q:"The word “yields” in paragraph 2 is closest in meaning to:",o:["produces","refuses","delays","measures"],a:0,w:"Yield = produce (un resultado). Está en tu lista de vocabulario."}]},
+{t:"Saturday at the Market",lv:"B1",tag:"Vida diaria",
+p:["Every Saturday, Rosa visits the market near her home in Lima. She goes early, at about seven o'clock, because the fruit is fresher and there are fewer people. First she buys bread from a small bakery at the entrance. Then she walks to the fruit section, where she chooses mangoes, bananas and lúcuma, a sweet fruit that many visitors have never tried.",
+"Rosa enjoys talking to the sellers. Some of them have known her for more than ten years, and they often save the best avocados for her. Before going home, she always stops at a juice stand and orders a glass of papaya juice.",
+"Rosa says the market is not only a place to shop. For her, it is a place to meet neighbours and feel part of the community."],
+qs:[{q:"Why does Rosa go to the market early?",o:["The market closes at eight","The fruit is fresher and there are fewer people","She works in the afternoon","The bread is cheaper in the morning"],a:1,w:"Párrafo 1: because the fruit is fresher and there are fewer people."},
+{q:"What is lúcuma?",o:["A type of bread","A sweet fruit","A juice stand","One of the sellers"],a:1,w:"El texto la define como a sweet fruit that many visitors have never tried."},
+{q:"What does Rosa always do before going home?",o:["She buys more avocados","She drinks a glass of papaya juice","She visits the bakery again","She calls her neighbours"],a:1,w:"Párrafo 2: she always stops at a juice stand and orders papaya juice."},
+{q:"What is the main idea of the last paragraph?",o:["The market is expensive","The market is important for Rosa's social life","Rosa wants to sell fruit","The market is far from her home"],a:1,w:"Para Rosa el mercado es también un lugar para encontrarse con vecinos y sentirse parte de la comunidad."}]},
+{t:"Learning to Ride at Thirty",lv:"B1",tag:"Historia personal",
+p:["Daniel never learned to ride a bicycle as a child. His family lived on a busy street, and his parents thought it was too dangerous. For years he felt embarrassed when friends planned bike trips, so he always invented an excuse.",
+"Last year, at the age of thirty, he decided to change that. He found a teacher who gives lessons to adults in a quiet park on Sunday mornings. At first, Daniel fell several times and wanted to quit. His teacher told him to look ahead, not at his feet, and to practise for only twenty minutes each time.",
+"After six weeks, Daniel could ride around the park without help. Now he cycles to work twice a week. He says the most difficult part was not keeping his balance but deciding to try."],
+qs:[{q:"Why didn't Daniel learn to ride as a child?",o:["He didn't have a bicycle","His parents thought the street was too dangerous","He didn't like sports","He lived far from a park"],a:1,w:"Párrafo 1: his parents thought it was too dangerous."},
+{q:"What advice did his teacher give him?",o:["Ride every day for two hours","Look ahead and practise in short sessions","Buy a better bicycle","Practise on busy streets"],a:1,w:"Look ahead, not at his feet, and practise for only twenty minutes each time."},
+{q:"How long did it take Daniel to ride without help?",o:["Two weeks","Six weeks","One year","Thirty days"],a:1,w:"Párrafo 3: after six weeks."},
+{q:"According to Daniel, what was the most difficult part?",o:["Keeping his balance","Finding a teacher","Deciding to try","Cycling to work"],a:2,w:"Not keeping his balance but deciding to try. Ojo con la estructura not X but Y."}]},
+{t:"Why Owls Hunt at Night",lv:"B1",tag:"Animales",
+p:["Most owls hunt at night, and their bodies are well adapted for the dark. Their large eyes collect as much light as possible, so they can see in places that look completely black to us. However, owls cannot move their eyes. Instead, they turn their heads, and some species can turn them about 270 degrees.",
+"Hearing is even more important than sight. Many owls have one ear slightly higher than the other. This helps them know exactly where a sound comes from, even a mouse moving under leaves or snow.",
+"Owls are also very quiet when they fly. The edges of their feathers are soft, which reduces the noise of the air. As a result, their prey usually does not hear them coming."],
+qs:[{q:"Why do owls turn their heads so much?",o:["To hear better","Because they cannot move their eyes","To scare their prey","To fall asleep"],a:1,w:"Párrafo 1: owls cannot move their eyes. Instead, they turn their heads."},
+{q:"What helps many owls know where a sound comes from?",o:["Their large eyes","Ears at slightly different heights","Their soft feathers","Their long legs"],a:1,w:"Párrafo 2: one ear slightly higher than the other."},
+{q:"The word “prey” is closest in meaning to:",o:["animals that an owl hunts","an owl's babies","dangerous enemies","tall trees"],a:0,w:"Prey = presa, los animales que caza."},
+{q:"Why does their prey usually not hear owls coming?",o:["Owls fly very high","Soft feather edges reduce the noise","Owls only hunt in snow","Owls fly very fast"],a:1,w:"Párrafo 3: the edges of their feathers are soft, which reduces the noise."}]},
+{t:"The Four-Day Week Experiment",lv:"B2",tag:"Trabajo y sociedad",
+p:["In recent years, companies in several countries have tested a four-day working week, in which employees work about 32 hours instead of 40 while keeping the same salary. Supporters argue that shorter weeks reduce stress and burnout, and that rested employees accomplish as much in four days as tired ones do in five.",
+"Results from some trials have been encouraging. Many participating companies reported that productivity stayed stable, while staff took fewer sick days and were less likely to resign. A number of firms decided to keep the new schedule after the trial ended.",
+"Critics, however, point out that the model does not suit every sector. Hospitals, schools and shops need people present throughout the week, so reducing hours may simply mean hiring more staff. Others warn that some employees end up squeezing five days of work into four, which could increase pressure rather than reduce it."],
+qs:[{q:"What is the main idea of the passage?",o:["The four-day week is now required by law","It has benefits but does not suit every sector","Employees prefer to work longer hours","All the trials failed"],a:1,w:"El texto presenta resultados positivos y luego las objeciones de los críticos."},
+{q:"The word “resign” in paragraph 2 is closest in meaning to:",o:["complain","leave their jobs","get promoted","work overtime"],a:1,w:"Resign = renunciar."},
+{q:"Why is the model difficult for hospitals?",o:["They need people present all week","Doctors refused to take part","Their equipment is too expensive","Salaries there are lower"],a:0,w:"Párrafo 3: need people present throughout the week."},
+{q:"What do some critics fear could happen?",o:["Salaries will rise too much","Compressing the workload will increase pressure","Companies will close","Productivity will double"],a:1,w:"Inferencia: squeezing five days of work into four could increase pressure."}]},
+{t:"Green Roofs and Urban Heat",lv:"B2",tag:"Ciudades y clima",
+p:["On a sunny afternoon, a dark rooftop in a large city can become far hotter than the air around it. Multiply that by thousands of buildings, and entire neighbourhoods become noticeably warmer than the surrounding countryside, a phenomenon known as the urban heat island effect.",
+"One response has been to cover roofs with plants. Green roofs absorb less heat than dark surfaces, and the water that evaporates from the plants cools the air nearby. They can also hold rainwater for several hours, reducing the risk that storm drains overflow during heavy rain.",
+"The approach has drawbacks. A green roof is heavier than a conventional one, so older buildings may need structural reinforcement first. Installation is expensive, and the plants require maintenance and, in dry climates, irrigation. For these reasons, some cities instead encourage “cool roofs” painted white, which reflect sunlight at a fraction of the cost."],
+qs:[{q:"What is the urban heat island effect?",o:["Cities being warmer than the countryside around them","Islands that form near large cities","Gardens on the roofs of buildings","A type of summer storm"],a:0,w:"Párrafo 1 lo define al final de la oración."},
+{q:"How do green roofs cool the air?",o:["By reflecting light with white paint","By absorbing less heat and through evaporation","By blocking the wind","By storing electricity"],a:1,w:"Párrafo 2: absorb less heat + water that evaporates cools the air."},
+{q:"Why can older buildings be a problem?",o:["Their roofs are too small","They may not support the extra weight","Their owners dislike plants","It never rains on them"],a:1,w:"Párrafo 3: heavier, so older buildings may need reinforcement."},
+{q:"Why does the author mention “cool roofs”?",o:["To show a cheaper alternative","To prove green roofs are useless","To describe plant species","To explain rainfall"],a:0,w:"Reflect sunlight at a fraction of the cost: una alternativa más barata."}]},
+{t:"The Paradox of Choice",lv:"C1",tag:"Economía del comportamiento",
+p:["Conventional economic thinking holds that more options make consumers better off: if one choice is good, ten must be better, since each person can find precisely what suits them. Yet a body of psychological research suggests that beyond a certain point, abundance can become a burden.",
+"In a frequently cited experiment, shoppers who encountered a large display of jams were more likely to stop and look than those who saw a small one, but considerably less likely to buy anything. Researchers proposed that an extensive range makes comparison cognitively exhausting and raises the fear of choosing badly, so people postpone the decision altogether. Even when they do choose, they may feel less satisfied, haunted by the alternatives they rejected.",
+"The finding has not gone unchallenged. Later attempts to replicate such studies produced mixed results, and several analyses concluded that the effect depends heavily on context: it appears strongest when options are hard to compare and when people lack clear preferences. The more defensible conclusion, then, is not that choice is harmful, but that its value hinges on how it is presented."],
+qs:[{q:"What is the main claim of the final paragraph?",o:["Choice is always harmful","The effect depends on context and presentation","The jam study was fraudulent","Economists were right all along"],a:1,w:"Its value hinges on how it is presented: depende del contexto."},
+{q:"According to the researchers, why do people postpone the decision?",o:["Prices are too high","Comparing is exhausting and they fear choosing badly","Shops close early","They are not interested in jam"],a:1,w:"Párrafo 2: cognitively exhausting + fear of choosing badly."},
+{q:"The phrase “haunted by” is closest in meaning to:",o:["troubled by thoughts of","frightened of ghosts","protected from","excited about"],a:0,w:"Aquí es figurado: seguir pensando con inquietud en algo."},
+{q:"In which situation would the effect probably be weakest?",o:["Many similar options","Unclear preferences","Options easy to compare and clear preferences","A huge display of products"],a:2,w:"Inferencia inversa: el efecto es más fuerte cuando comparar es difícil y no hay preferencias claras."}]},
+{t:"Will Translation Apps Replace Language Learning?",lv:"C1",tag:"Tecnología y lenguaje",
+p:["As machine translation becomes faster and more accurate, a provocative question has emerged: why invest years in learning a foreign language when software can translate a conversation almost instantly? For routine tasks such as reading a menu or asking for directions, the argument is difficult to dismiss.",
+"Language educators counter that translation tools solve only the most visible part of communication. Meaning often depends on tone, shared references and what is deliberately left unsaid, all of which automated systems can flatten. A joke that relies on wordplay, or a polite refusal disguised as enthusiasm, may survive translation literally while losing its intent entirely.",
+"There is also a cognitive dimension. Studies of bilingual individuals have linked language learning to improved attention control, although the size and durability of these benefits remain contested. Perhaps the strongest case, however, is a social one: speaking someone's language signals effort and respect in a way that a device held between two people cannot. Rather than rendering language learning obsolete, translation technology may shift its purpose from necessity toward connection."],
+qs:[{q:"What is the author's overall view?",o:["Translation makes learning languages obsolete","The purpose of learning may shift toward connection","Translation tools are always inaccurate","Bilingualism harms attention"],a:1,w:"Última oración: from necessity toward connection."},
+{q:"Which example shows what translation tools can “flatten”?",o:["A restaurant menu","Directions to a station","A polite refusal disguised as enthusiasm","A list of numbers"],a:2,w:"Párrafo 2: se pierde la intención aunque la traducción literal sea correcta."},
+{q:"The word “contested” is closest in meaning to:",o:["disputed","confirmed","celebrated","forgotten"],a:0,w:"Contested = discutido, no hay acuerdo."},
+{q:"What does the author concede to the other side?",o:["Translation is useful for routine tasks","Jokes always translate well","The cognitive benefits are certain","Devices show more respect"],a:0,w:"Párrafo 1: for routine tasks the argument is difficult to dismiss."}]},
+{t:"The Qhapaq Ñan",lv:"C1",tag:"Historia andina",
+p:["Long before modern highways, the Inca state maintained one of the most extensive road networks of the pre-industrial world. Known as the Qhapaq Ñan, it linked some 30,000 kilometres of routes across terrain ranging from coastal desert to high Andean passes, connecting territories that today belong to six South American countries.",
+"The network was less a single road than an integrated system. Engineers adapted construction to local conditions, building stone stairways on steep slopes, causeways across wetlands and suspension bridges woven from grass over deep gorges. Along the routes stood storehouses and way stations, which allowed armies, officials and llama caravans to travel long distances with reliable supplies.",
+"Communication depended on relay runners called chasquis, who passed messages and small goods from station to station. Because the Incas had no alphabetic writing, information was memorised or recorded on knotted cords known as quipus. Recognised as a UNESCO World Heritage Site in 2014, the Qhapaq Ñan is increasingly studied not as a relic but as an example of infrastructure designed in close dialogue with the landscape."],
+qs:[{q:"Why is the network described as “an integrated system”?",o:["It was one straight road","It combined different structures with supply stations","It was built by a single engineer","Only armies used it"],a:1,w:"Párrafo 2: escaleras, calzadas, puentes y depósitos funcionando juntos."},
+{q:"What was the purpose of the storehouses?",o:["To provide reliable supplies on long journeys","To keep the quipus safe","To house the chasquis' families","To collect taxes in gold"],a:0,w:"Allowed armies, officials and caravans to travel with reliable supplies."},
+{q:"How was information recorded?",o:["With an alphabet","On knotted cords called quipus","On painted stones","It was never recorded"],a:1,w:"Párrafo 3: memorised or recorded on quipus."},
+{q:"The final sentence suggests researchers now see the Qhapaq Ñan as:",o:["an obsolete ruin","a model of infrastructure adapted to the terrain","only a tourist attraction","a military failure"],a:1,w:"Not as a relic but as infrastructure designed in dialogue with the landscape."}]},
+];
+const CPAL=[
+["go","to move from one place to another","ir"],["up","toward a higher position","arriba"],["at","used to show an exact place or time","en (lugar o hora exacta)"],["in","inside a place or a period of time","en, dentro de"],["on","touching the top surface of something","sobre, encima de"],["by","next to; or showing who did something","junto a; por"],["we","you and I, or me and other people","nosotros"],["me","the person who is speaking (object form)","me, mí"],["it","a thing already mentioned","eso, lo"],["so","for this reason; very","así que; tan"],
+["sky","the space above the earth where clouds are","cielo"],["map","a drawing of an area that shows roads and places","mapa"],["job","the work you do to earn money","trabajo"],["key","a small metal object that opens a lock","llave"],["fix","to repair something that is broken","arreglar"],["law","a rule made by the government","ley"],["cup","a small container you drink from","taza"],["fly","to move through the air","volar"],["net","material with holes, used to catch fish","red"],["owl","a bird with large eyes that hunts at night","lechuza, búho"],
+["goal","something you want to achieve","meta, objetivo"],["cost","the amount of money needed to buy something","costo"],["rain","water that falls from clouds","lluvia"],["word","a unit of language with a meaning","palabra"],["risk","the possibility that something bad happens","riesgo"],["plan","a set of decisions about how to do something","plan"],["team","a group of people working together","equipo"],["fact","something that is known to be true","hecho, dato"],["idea","a thought or suggestion","idea"],["grow","to become bigger","crecer"],
 ];
 const PROMPTS=[
 {id:"i1",ex:"IELTS",kind:"Writing Task 2",min:40,words:250,mode:"write",text:"Some people believe that university education should be free for everyone. Others think that students should pay for their own studies. Discuss both views and give your own opinion."},
@@ -395,9 +465,9 @@ function runQuiz(host,qs,opts){
 /* ============ INGLÉS ============ */
 function renderIngles(){
   view.appendChild(el(`<div class="stack" style="margin-bottom:18px"><h1>Inglés</h1><p class="muted small">TOEFL iBT e IELTS Academic</p></div>`));
-  view.appendChild(segs("ingles",[["vocab","Vocabulario"],["gram","Gramática"],["frases","Frases"],["lectura","Lectura"],["prod","Escribir y hablar"],["formato","Formato"]]));
+  view.appendChild(segs("ingles",[["vocab","Vocabulario"],["gram","Gramática"],["frases","Frases"],["cpal","Código"],["lectura","Lectura"],["prod","Escribir y hablar"],["formato","Formato"]]));
   const host=el(`<div class="stack" style="margin-top:18px"></div>`);view.appendChild(host);
-  ({vocab:vocabView,gram:()=>{host.appendChild(el(`<p class="muted">Errores típicos que restan puntos en Writing y Speaking.</p>`));const q=el("<div></div>");host.appendChild(q);runQuiz(q,shuffle(GRAMMAR).slice(0,10),{reshuffle:true,onDone:(s)=>award("gram",10)})},frases:frasesView,lectura:lecturaView,prod:prodView,formato:formatoView})[sub.ingles](host);
+  ({vocab:vocabView,gram:()=>{host.appendChild(el(`<p class="muted">Errores típicos que restan puntos en Writing y Speaking.</p>`));const q=el("<div></div>");host.appendChild(q);runQuiz(q,shuffle(GRAMMAR).slice(0,10),{reshuffle:true,onDone:(s)=>award("gram",10)})},frases:frasesView,cpal:cpalView,lectura:lecturaView,prod:prodView,formato:formatoView})[sub.ingles](host);
 }
 function vocabView(host){
   const boxes=S.get("vbox",{});const t=dayStr();
@@ -433,8 +503,48 @@ function frasesView(host){
   next();
 }
 function lecturaView(host){
+  const lvSel=S.get("rlv","Todos");const done=S.get("rdone",[]);const order={B1:1,B2:2,C1:3};
+  const f=el(`<div class="row" style="justify-content:space-between"><div class="seg" role="group" aria-label="Nivel"></div><span class="small muted">${done.length} de ${READINGS.length} leídas</span></div>`);host.appendChild(f);
+  ["Todos","B1","B2","C1"].forEach(l=>{const b=el(`<button>${l}</button>`);b.setAttribute("aria-pressed",l===lvSel);b.onclick=()=>{S.set("rlv",l);host.innerHTML="";lecturaView(host)};f.firstElementChild.appendChild(b)});
   const list=el(`<div class="list"></div>`);host.appendChild(list);
-  READINGS.forEach((r,k)=>{const b=el(`<button class="item"><div class="grow"><div class="t">${esc(r.t)}</div><div class="s">${r.tag}</div></div><span class="muted">›</span></button>`);b.onclick=()=>{host.innerHTML="";const back=el(`<button class="btn ghost" style="align-self:flex-start">‹ Lecturas</button>`);back.onclick=()=>{host.innerHTML="";lecturaView(host)};host.appendChild(back);host.appendChild(el(`<article class="card passage stack"><span class="label">Lee con calma · unos 4 minutos</span><h2>${esc(r.t)}</h2><div>${r.p.map(x=>"<p>"+esc(x)+"</p>").join("")}</div></article>`));const q=el("<div class='card'></div>");host.appendChild(q);runQuiz(q,r.qs,{onDone:()=>award("lectura",15)})};list.appendChild(b)});
+  READINGS.filter(r=>lvSel==="Todos"||r.lv===lvSel).sort((a,b)=>order[a.lv]-order[b.lv]).forEach(r=>{const ok=done.includes(r.t);const b=el(`<button class="item"><span class="tick ${ok?"on":""}">${ok?"✓":""}</span><div class="grow"><div class="t">${esc(r.t)}</div><div class="s">${r.tag} · 4 preguntas</div></div><span class="pill">${r.lv}</span></button>`);b.onclick=()=>{host.innerHTML="";const back=el(`<button class="btn ghost" style="align-self:flex-start">‹ Lecturas</button>`);back.onclick=()=>{host.innerHTML="";lecturaView(host)};host.appendChild(back);host.appendChild(el(`<article class="card passage stack"><span class="label">Nivel ${r.lv} · ${r.lv==="B1"?"unos 3 minutos":r.lv==="B2"?"unos 4 minutos":"unos 5 minutos"}</span><h2>${esc(r.t)}</h2><div>${r.p.map(x=>"<p>"+esc(x)+"</p>").join("")}</div></article>`));const q=el("<div class='card'></div>");host.appendChild(q);runQuiz(q,r.qs,{onDone:()=>{const d=S.get("rdone",[]);if(!d.includes(r.t)){d.push(r.t);S.set("rdone",d)}award("lectura",{B1:10,B2:15,C1:20}[r.lv])}})};list.appendChild(b)});
+}
+function cpalView(host){
+  let st=S.get("cpal",null);let cur="";
+  const fresh=len=>{let seen=S.get("cpal_seen",[]);const pool=CPAL.filter(x=>x[0].length===len);let left=pool.filter(x=>!seen.includes(x[0]));if(!left.length){seen=seen.filter(w=>w.length!==len);S.set("cpal_seen",seen);left=pool}const w=left[Math.floor(Math.random()*left.length)];return{len,w:w[0],rows:[],done:false,tr:false}};
+  if(!st)st=fresh(3);
+  host.appendChild(el(`<p class="muted small">Adivina la palabra en inglés en 10 intentos. Sus letras no se repiten. <span style="color:var(--ok)">●</span> letra en su lugar · <span style="color:var(--near)">○</span> letra en otro lugar.</p>`));
+  const top=el(`<div class="row" style="justify-content:space-between"><div class="seg" role="group" aria-label="Largo"></div><span class="small muted" id="bank"></span></div>`);host.appendChild(top);
+  [2,3,4].forEach(n=>{const b=el(`<button>${n} letras</button>`);b.dataset.n=n;b.onclick=()=>{st=fresh(n);cur="";save();draw()};top.firstElementChild.appendChild(b)});
+  const clue=el(`<div class="card stack"></div>`);host.appendChild(clue);
+  const hist=el(`<div class="code-hist"></div>`);host.appendChild(hist);
+  const curEl=el(`<div class="code-cur"></div>`);host.appendChild(curEl);
+  const kb=el(`<div class="kb"></div>`);host.appendChild(kb);
+  const ctl=el(`<div class="row"><button class="btn ghost" id="bk" style="flex:1">Borrar</button><button class="btn" id="ok" style="flex:2">Probar</button></div>`);host.appendChild(ctl);
+  const msg=el(`<div></div>`);host.appendChild(msg);
+  ["qwertyuiop","asdfghjkl","zxcvbnm"].forEach(r=>{const row=el(`<div class="kr"></div>`);[...r].forEach(ch=>{const b=document.createElement("button");b.textContent=ch;b.dataset.k=ch;b.onclick=()=>typeCh(ch);row.appendChild(b)});kb.appendChild(row)});
+  function save(){S.set("cpal",st)}
+  function info(){return CPAL.find(x=>x[0]===st.w)}
+  function typeCh(ch){if(st.done||cur.length>=st.len||cur.includes(ch))return;cur+=ch;draw()}
+  function back(){cur=cur.slice(0,-1);draw()}
+  function submit(){if(st.done)return;if(cur.length<st.len){toast("Faltan letras");return}let b=0,w=0;for(let i=0;i<st.len;i++){if(cur[i]===st.w[i])b++;else if(st.w.includes(cur[i]))w++}st.rows.push({g:cur,b,w});cur="";if(b===st.len||st.rows.length>=10){st.done=true;const seen=S.get("cpal_seen",[]);if(!seen.includes(st.w)){seen.push(st.w);S.set("cpal_seen",seen)}const won=b===st.len;award("cpal",won?10+(10-st.rows.length)*3-(st.tr?5:0):3)}save();draw()}
+  ctl.querySelector("#bk").onclick=back;ctl.querySelector("#ok").onclick=submit;
+  function draw(){
+    const i=info();
+    top.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.n===st.len));
+    top.querySelector("#bank").textContent="Banco: "+S.get("cpal_seen",[]).length+"/"+CPAL.length+" vistas";
+    clue.innerHTML=`<span class="label">Pista de significado</span><p>${esc(i[1])}</p>`;
+    if(st.tr||st.done)clue.appendChild(el(`<p class="muted">En español: <b>${esc(i[2])}</b></p>`));
+    else{const b=el(`<button class="btn quiet" style="align-self:flex-start">Ver traducción (−5 XP)</button>`);b.onclick=()=>{st.tr=true;save();draw()};clue.appendChild(b)}
+    hist.innerHTML="";st.rows.forEach((r,k)=>{const pegs=Array(r.b).fill("b").concat(Array(r.w).fill("w")).concat(Array(st.len-r.b-r.w).fill(""));hist.appendChild(el(`<div class="code-row"><span class="small muted">${k+1}</span><span class="d" style="text-transform:uppercase">${r.g}</span><span class="pegs" aria-label="${r.b} en su lugar, ${r.w} en otro lugar">${pegs.map(p=>`<i class="peg ${p}"></i>`).join("")}</span></div>`))});
+    curEl.innerHTML=Array.from({length:st.len},(_,k)=>`<div style="text-transform:uppercase">${cur[k]||""}</div>`).join("");
+    kb.querySelectorAll("button").forEach(b=>b.disabled=st.done||cur.includes(b.dataset.k));
+    curEl.hidden=st.done;kb.hidden=st.done;ctl.hidden=st.done;
+    msg.innerHTML="";if(st.done){const won=st.rows[st.rows.length-1].b===st.len;const c=el(`<div class="card stack"><span class="label">${won?"Acertaste en "+st.rows.length+" intento"+(st.rows.length>1?"s":""):"Sin intentos"}</span><h2 style="text-transform:uppercase;letter-spacing:.08em">${st.w}</h2><p>${esc(i[2])} · <span class="muted">${esc(i[1])}</span></p><button class="btn" id="nx">Otra palabra</button></div>`);c.querySelector("#nx").onclick=()=>{st=fresh(st.len);cur="";save();draw()};msg.appendChild(c)}
+  }
+  const key=e=>{if(e.metaKey||e.ctrlKey||e.target.tagName==="TEXTAREA"||e.target.tagName==="INPUT")return;if(/^[a-zA-Z]$/.test(e.key))typeCh(e.key.toLowerCase());else if(e.key==="Enter"){e.preventDefault();submit()}else if(e.key==="Backspace")back()};
+  document.addEventListener("keydown",key);cleanup=()=>document.removeEventListener("keydown",key);
+  save();draw();
 }
 function prodView(host){
   host.appendChild(el(`<p class="muted">Practica con tiempo real. Al terminar, guárdalo en <b>Para mañana</b> con un prompt listo para que Claude te califique.</p>`));
