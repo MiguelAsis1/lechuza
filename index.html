@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lechuza"><meta name="theme-color" content="#121628">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:0}body{margin:0}[hidden]{display:none!important}</style>
+<title>Lechuza</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: one-column night app, content column max 560px, fixed bottom tab bar; single dark theme by choice (night use) */
+:root{
+  --night:#121628; --panel:#1a2040; --panel2:#222a52; --line:#2f3866;
+  --ink:#ece6d8; --dim:#a3a8c3; --faint:#6f7699;
+  --lamp:#f2b25c; --lamp-ink:#2a1c06;
+  --ok:#73cdb7; --bad:#e8808c; --near:#e6c86e; --sky:#93a9ff;
+  --f-display:"Young Serif",Georgia,"Times New Roman",serif;
+  --f-body:"Atkinson Hyperlegible",-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r:14px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--night);color:var(--ink)}
+body{font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--night)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--lamp);outline-offset:2px}
+.wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px calc(96px + env(safe-area-inset-bottom,0px))}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:8px 14px}
+.brand{font-family:var(--f-display);font-size:1.5rem;letter-spacing:.01em;display:flex;align-items:center;gap:10px}
+.brand svg{width:30px;height:30px}
+.chips{display:flex;gap:8px}
+.chip{font-size:.8rem;padding:4px 10px;border:1px solid var(--line);border-radius:999px;color:var(--dim);font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip b{color:var(--lamp)}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;margin:0}
+h1{font-size:1.9rem;line-height:1.15}
+h2{font-size:1.35rem;line-height:1.2}
+h3{font-size:1.1rem}
+p{margin:0}
+.muted{color:var(--dim)}
+.small{font-size:.85rem}
+.label{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--faint);font-weight:700}
+.stack{display:flex;flex-direction:column;gap:12px}
+.stack-lg{display:flex;flex-direction:column;gap:22px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.seg{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin-inline:-2px}
+.seg::-webkit-scrollbar{display:none}
+.seg button{flex:0 0 auto;padding:7px 14px;border-radius:999px;border:1px solid var(--line);color:var(--dim);font-size:.9rem}
+.seg button[aria-pressed="true"]{background:var(--lamp);color:var(--lamp-ink);border-color:var(--lamp);font-weight:700}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 18px;border-radius:12px;background:var(--lamp);color:var(--lamp-ink);font-weight:700;min-height:44px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.quiet{background:var(--panel2);color:var(--ink)}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn.full{width:100%}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+.item .grow{flex:1;min-width:0}
+.item .t{font-weight:700}
+.item .s{font-size:.85rem;color:var(--dim)}
+.tick{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);flex:0 0 auto;display:grid;place-items:center;font-size:.8rem}
+.tick.on{background:var(--ok);border-color:var(--ok);color:var(--night)}
+.pill{font-size:.75rem;padding:2px 8px;border-radius:999px;background:var(--panel2);color:var(--dim);white-space:nowrap}
+/* tab bar */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--night) 92%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+nav.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav.tabs button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 4px 8px;color:var(--faint);font-size:.72rem;font-weight:700;letter-spacing:.03em}
+nav.tabs button svg{width:24px;height:24px}
+nav.tabs button[aria-current="page"]{color:var(--lamp)}
+/* quiz */
+.q{font-size:1.1rem;line-height:1.45}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel)}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--panel))}
+.opt.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 16%,var(--panel))}
+.why{padding:12px 14px;border-radius:12px;background:var(--panel2);font-size:.95rem}
+.bar{height:6px;border-radius:99px;background:var(--panel2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--lamp);border-radius:99px}
+/* flashcard */
+.flash{min-height:260px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px;padding:24px;cursor:pointer}
+.flash .w{font-family:var(--f-display);font-size:2.3rem;line-height:1.1}
+.flash .ex{font-style:italic;color:var(--dim)}
+/* reading */
+.passage p{margin-bottom:12px;font-size:1.02rem;line-height:1.65;max-width:65ch}
+/* writing */
+textarea,input[type=text]{width:100%;background:var(--night);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:16px}
+textarea{min-height:240px;resize:vertical;line-height:1.55}
+.timer{font-family:var(--f-display);font-size:2.4rem;font-variant-numeric:tabular-nums;line-height:1}
+.timer.end{color:var(--bad)}
+.checks label{display:flex;gap:10px;align-items:flex-start;padding:6px 0}
+.checks input{width:20px;height:20px;accent-color:var(--lamp);flex:0 0 auto;margin-top:2px}
+/* sentence builder */
+.slots{min-height:56px;display:flex;flex-wrap:wrap;gap:6px;padding:10px;border:1px dashed var(--line);border-radius:12px}
+.tok{padding:8px 12px;border-radius:10px;background:var(--panel2);border:1px solid var(--line)}
+.slots .tok{background:color-mix(in srgb,var(--lamp) 20%,var(--panel));border-color:color-mix(in srgb,var(--lamp) 50%,var(--line))}
+/* sudoku */
+.sud{display:grid;grid-template-columns:repeat(9,1fr);width:100%;max-width:440px;margin:0 auto;aspect-ratio:1;border:2px solid var(--ink);border-radius:6px;overflow:hidden;background:var(--panel)}
+.sud button{position:relative;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font-size:clamp(1rem,5.4vw,1.5rem);font-variant-numeric:tabular-nums;display:grid;place-items:center;min-width:0;padding:0;color:var(--sky)}
+.sud button.given{color:var(--ink);font-weight:700}
+.sud button.c3{border-right:2px solid var(--ink)}
+.sud button.r3{border-bottom:2px solid var(--ink)}
+.sud button.c9{border-right:0}
+.sud button.r9{border-bottom:0}
+.sud button.peer{background:color-mix(in srgb,var(--sky) 9%,var(--panel))}
+.sud button.same{background:color-mix(in srgb,var(--lamp) 22%,var(--panel))}
+.sud button.sel{background:color-mix(in srgb,var(--lamp) 45%,var(--panel));color:var(--ink)}
+.sud button.err{color:var(--bad)}
+.sud .notes{position:absolute;inset:2px;display:grid;grid-template-columns:repeat(3,1fr);font-size:clamp(.45rem,2.1vw,.62rem);color:var(--dim);line-height:1}
+.sud .notes span{display:grid;place-items:center}
+.pad{display:grid;grid-template-columns:repeat(9,1fr);gap:5px;max-width:440px;margin:0 auto;width:100%}
+.pad button{padding:10px 0;border-radius:10px;background:var(--panel2);font-size:1.2rem;font-variant-numeric:tabular-nums;min-width:0}
+.pad button.done{opacity:.3}
+.tools{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:440px;margin:0 auto;width:100%}
+.tools button{padding:8px 4px;border-radius:10px;border:1px solid var(--line);font-size:.82rem;color:var(--dim)}
+.tools button[aria-pressed="true"]{border-color:var(--lamp);color:var(--lamp)}
+/* word game */
+.wg{display:grid;grid-template-rows:repeat(6,1fr);gap:6px;width:min(100%,330px);margin:0 auto}
+.wg .r{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.wg .r div{aspect-ratio:1;border:2px solid var(--line);border-radius:8px;display:grid;place-items:center;font-family:var(--f-display);font-size:1.6rem;text-transform:uppercase}
+.wg .r div.f{border-color:var(--faint)}
+.st-ok{background:var(--ok)!important;border-color:var(--ok)!important;color:var(--night)!important}
+.st-near{background:var(--near)!important;border-color:var(--near)!important;color:var(--night)!important}
+.st-no{background:var(--panel2)!important;border-color:var(--panel2)!important;color:var(--faint)!important}
+.kb{display:flex;flex-direction:column;gap:6px;width:100%}
+.kb .kr{display:flex;gap:4px;justify-content:center}
+.kb button{flex:1 1 0;max-width:42px;min-width:0;height:50px;border-radius:7px;background:var(--panel2);font-weight:700;text-transform:uppercase;font-size:.95rem}
+.kb button.wide{max-width:66px;flex:1.6 1 0;font-size:.72rem}
+/* code breaker */
+.code-hist{display:flex;flex-direction:column;gap:6px}
+.code-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:10px;background:var(--panel);border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.code-row .d{font-family:var(--f-display);font-size:1.4rem;letter-spacing:.3em}
+.pegs{display:flex;gap:5px}
+.peg{width:13px;height:13px;border-radius:50%;border:2px solid var(--faint)}
+.peg.b{background:var(--ok);border-color:var(--ok)}
+.peg.w{background:transparent;border-color:var(--near)}
+.code-cur{display:flex;gap:8px;justify-content:center}
+.code-cur div{width:54px;height:62px;border-radius:10px;border:2px solid var(--line);display:grid;place-items:center;font-family:var(--f-display);font-size:1.8rem}
+.numpad{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.numpad button{padding:12px 0;border-radius:10px;background:var(--panel2);font-size:1.2rem}
+.numpad button:disabled{opacity:.3}
+/* misc */
+.hero{padding:6px 0 4px}
+.moon{color:var(--lamp)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+.stat .n{font-family:var(--f-display);font-size:1.6rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat .k{font-size:.75rem;color:var(--dim)}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--night);padding:10px 16px;border-radius:12px;font-weight:700;z-index:30;max-width:calc(100% - 32px);text-align:center}
+.pre{white-space:pre-wrap;font-size:.92rem;background:var(--night);border:1px solid var(--line);border-radius:12px;padding:12px;max-height:240px;overflow:auto}
+.lesson-ex{display:grid;gap:8px}
+.ex-bad,.ex-good{padding:10px 12px;border-radius:10px;font-size:.92rem}
+.ex-bad{background:color-mix(in srgb,var(--bad) 12%,var(--panel));border-left:3px solid var(--bad)}
+.ex-good{background:color-mix(in srgb,var(--ok) 12%,var(--panel));border-left:3px solid var(--ok)}
+table.fmt{width:100%;border-collapse:collapse;font-size:.9rem}
+table.fmt td,table.fmt th{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+table.fmt th{color:var(--faint);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em}
+.tblwrap{overflow-x:auto}
+.net{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--dim)}
+.net i{width:8px;height:8px;border-radius:50%;background:var(--faint)}
+.net.on i{background:var(--ok)}
+@media (prefers-reduced-motion:no-preference){.fade{animation:fade .25s ease}@keyframes fade{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}}
+</style>
+</head><body>
+
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 10c0-3 2-5 4-5l2 3h8l2-3c2 0 4 2 4 5v8c0 6-4.5 10-10 10S6 24 6 18z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="15" r="3.2" fill="var(--lamp)"/><circle cx="20" cy="15" r="3.2" fill="var(--lamp)"/><path d="M14.5 20l1.5 2 1.5-2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+      Lechuza
+    </div>
+    <div class="chips"><span class="chip" id="chipStreak"></span><span class="chip" id="chipXp"></span></div>
+  </header>
+  <main id="view"></main>
+</div>
+<nav class="tabs" aria-label="Secciones"><div class="in">
+  <button data-tab="hoy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>Hoy</button>
+  <button data-tab="ingles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 19l5-14 5 14M5 14h6"/><path d="M15 12h6M18 9v10"/></svg>Inglés</button>
+  <button data-tab="logica"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>Lógica</button>
+  <button data-tab="claude"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></svg>Claude</button>
+</div></nav>
+
+<script>
+"use strict";
+/* ============ storage & progress ============ */
+const S={get(k,d){try{const v=localStorage.getItem("lz_"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("lz_"+k,JSON.stringify(v))}catch(e){}}};
+const pad2=n=>String(n).padStart(2,"0");
+function dayStr(d){d=d||new Date();return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate())}
+function addDays(s,n){const [y,m,d]=s.split("-").map(Number);const t=new Date(y,m-1,d);t.setDate(t.getDate()+n);return dayStr(t)}
+function dayIndex(){const t=new Date();return Math.floor(Date.UTC(t.getFullYear(),t.getMonth(),t.getDate())/864e5)}
+function prog(){return S.get("prog",{xp:0,days:[],today:{d:"",k:[]}})}
+function award(kind,xp){const p=prog();const t=dayStr();p.xp+=xp||0;if(!p.days.includes(t))p.days.push(t);if(p.today.d!==t)p.today={d:t,k:[]};if(kind&&!p.today.k.includes(kind))p.today.k.push(kind);S.set("prog",p);chips()}
+function doneToday(kind){const p=prog();return p.today.d===dayStr()&&p.today.k.includes(kind)}
+function streak(){const p=prog();const set=new Set(p.days);let d=dayStr();if(!set.has(d))d=addDays(d,-1);let n=0;while(set.has(d)){n++;d=addDays(d,-1)}return n}
+function chips(){const p=prog();document.getElementById("chipStreak").innerHTML="Racha <b>"+streak()+"</b>";document.getElementById("chipXp").innerHTML="<b>"+p.xp+"</b> XP"}
+function toast(msg){const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),1800)}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+async function copyText(text,fallbackEl){try{await navigator.clipboard.writeText(text);toast("Copiado")}catch(e){if(fallbackEl){fallbackEl.focus();if(fallbackEl.select)fallbackEl.select();else{const r=document.createRange();r.selectNodeContents(fallbackEl);const s=getSelection();s.removeAllRanges();s.addRange(r)}}toast("Selecciónalo y copia a mano")}}
+let wakeLock=null;async function keepAwake(on){try{if(on&&navigator.wakeLock&&!wakeLock){wakeLock=await navigator.wakeLock.request("screen")}else if(!on&&wakeLock){await wakeLock.release();wakeLock=null}}catch(e){}}
+
+/* ============ content: English ============ */
+const VOCAB=[
+["mitigate","verb","mitigar, atenuar","to make something less severe or harmful","New sea walls could mitigate the risk of flooding."],
+["substantial","adj.","considerable, sustancial","large in amount, size or importance","The project received substantial funding from the government."],
+["inherent","adj.","inherente","existing as a natural, permanent part of something","Every investment carries inherent risks."],
+["allocate","verb","asignar, destinar","to give a share of money, time or resources for a purpose","The city allocated more money to public transport."],
+["ambiguous","adj.","ambiguo","having more than one possible meaning","The instructions were ambiguous, so the students disagreed."],
+["coherent","adj.","coherente","logical, clear and well organized","A coherent essay links every paragraph to its main argument."],
+["deteriorate","verb","deteriorarse, empeorar","to become worse over time","Air quality deteriorates during the winter months."],
+["empirical","adj.","empírico","based on observation or experiment, not theory","There is little empirical evidence for that claim."],
+["feasible","adj.","factible, viable","possible and practical to do","A four-day working week may be feasible for small firms."],
+["hypothesis","noun","hipótesis","an idea that can be tested by research","The results supported the original hypothesis."],
+["implication","noun","consecuencia, implicancia","a likely effect of an action or decision","The new law has serious implications for farmers."],
+["prevalent","adj.","frecuente, extendido","common in a particular place or time","Smartphone addiction is prevalent among teenagers."],
+["undermine","verb","socavar, debilitar","to gradually make something weaker","Constant criticism can undermine a child's confidence."],
+["advocate","verb","defender, abogar por","to publicly support an idea or policy","Many experts advocate free public education."],
+["compensate","verb","compensar","to make up for a loss or problem","Higher salaries can compensate for long working hours."],
+["consecutive","adj.","consecutivo","following one after another without a break","It rained for five consecutive days."],
+["constrain","verb","limitar, restringir","to limit what is possible","A small budget constrains what the lab can study."],
+["diminish","verb","disminuir","to become or make smaller or less","The noise gradually diminished after midnight."],
+["fluctuate","verb","fluctuar","to change frequently in amount or level","Fruit prices fluctuate depending on the season."],
+["notion","noun","noción, idea","a belief or idea about something","The notion that intelligence is fixed is now outdated."],
+["phenomenon","noun","fenómeno","something that happens and can be observed","El Niño is a climate phenomenon that strongly affects Peru."],
+["rigorous","adj.","riguroso","extremely careful and thorough","The vaccine passed rigorous testing before approval."],
+["scarce","adj.","escaso","not available in large enough amounts","Fresh water is scarce in coastal deserts."],
+["sustain","verb","sostener, mantener","to keep something going over a period of time","Tourism sustains many small local economies."],
+["thereby","adv.","de ese modo, así","as a result of the action just mentioned","She saved every month, thereby reducing her debt."],
+["albeit","conj.","aunque, si bien","although (used before an adjective or phrase)","The plan worked, albeit more slowly than expected."],
+["comprise","verb","constar de, comprender","to consist of or be made up of","The exam comprises four separate sections."],
+["contradict","verb","contradecir","to state or show the opposite of something","The new data contradict earlier findings."],
+["derive","verb","derivar, obtener","to get something from a particular source","Many English words derive from Latin."],
+["emerge","verb","surgir, aparecer","to appear or become known","Several new problems emerged during the trial."],
+["justify","verb","justificar","to give a good reason for something","Can such a high cost really be justified?"],
+["neglect","verb","descuidar, desatender","to fail to give enough care or attention","Rural roads have been neglected for decades."],
+["offset","verb","compensar, contrarrestar","to balance the effect of something","Planting trees can offset some carbon emissions."],
+["plausible","adj.","verosímil, creíble","seeming reasonable or likely to be true","That is a plausible explanation for the delay."],
+["reluctant","adj.","reacio","not willing to do something","Some employees are reluctant to change their routines."],
+["subsequent","adj.","posterior, siguiente","happening after something else","Subsequent studies confirmed the result."],
+["trend","noun","tendencia","a general direction in which something changes","The trend toward remote work shows no sign of slowing."],
+["viable","adj.","viable","able to work successfully","Solar energy is now a viable option for many homes."],
+["widespread","adj.","generalizado","existing or happening in many places","Support for the reform is widespread."],
+["yield","verb","producir, dar (resultados)","to produce a result, profit or crop","The new method yields more accurate results."],
+];
+const GRAMMAR=[
+{q:"If I ___ more time, I would study abroad.",o:["have","had","will have","would have"],a:1,w:"Segundo condicional (situación hipotética): if + pasado simple, would + verbo base."},
+{q:"She has lived in Lima ___ 2019.",o:["for","since","during","from"],a:1,w:"<b>Since</b> + punto en el tiempo (2019). <b>For</b> + duración (for six years)."},
+{q:"The number of international students ___ increased.",o:["have","has","are","were"],a:1,w:"<b>The number of</b> es singular → has. En cambio, <b>a number of</b> students <i>have</i>."},
+{q:"Neither the teacher nor the students ___ ready.",o:["was","were","is","has been"],a:1,w:"Con neither…nor el verbo concuerda con el sujeto más cercano: students → were."},
+{q:"By the time we arrived, the film ___.",o:["started","has started","had started","was start"],a:2,w:"Pasado perfecto (had + participio) para una acción anterior a otra acción pasada."},
+{q:"Recent research ___ that sleep improves memory.",o:["suggest","suggests","suggesting","are suggesting"],a:1,w:"<b>Research</b> es incontable → verbo en singular."},
+{q:"I'm looking forward to ___ you next week.",o:["see","seeing","saw","be seen"],a:1,w:"En <b>look forward to</b>, 'to' es preposición, así que va seguido de -ing."},
+{q:"The report, ___ was published last year, caused a debate.",o:["that","which","who","what"],a:1,w:"Cláusula no restrictiva (entre comas): se usa <b>which</b>, nunca 'that'."},
+{q:"Hardly ___ the exam when the power went out.",o:["I had started","had I started","I started","did I started"],a:1,w:"Tras adverbios negativos al inicio (Hardly, Rarely, Never) se invierte sujeto y auxiliar."},
+{q:"There is ___ evidence to support that theory.",o:["few","little","many","a few"],a:1,w:"<b>Evidence</b> es incontable → little / much. Few y many van con contables."},
+{q:"The doctor suggested that she ___ more water.",o:["drinks","drink","drank","to drink"],a:1,w:"Subjuntivo tras suggest / recommend / insist that: verbo en forma base, sin -s."},
+{q:"The more you practise, ___ you become.",o:["the more confident","more confident","the most confident","most confident"],a:0,w:"Estructura paralela: <b>the</b> + comparativo…, <b>the</b> + comparativo."},
+{q:"Despite ___ tired, she finished the essay.",o:["she was","being","to be","be"],a:1,w:"<b>Despite</b> + sustantivo o -ing. Con una cláusula completa usa although: although she was tired."},
+{q:"Lima is ___ than it was twenty years ago.",o:["much more crowded","more crowdeder","much crowded","most crowded"],a:0,w:"<b>Much</b> (o far, a lot) intensifica un comparativo: much more crowded."},
+{q:"Not only ___ the deadline, but he also lost the files.",o:["he missed","did he miss","he did miss","missed he"],a:1,w:"<b>Not only</b> al inicio de la oración exige inversión con auxiliar: did he miss."},
+{q:"Each of the candidates ___ a short interview.",o:["have","has","are having","were having"],a:1,w:"<b>Each of</b> + plural, pero el verbo va en singular."},
+];
+const SENTENCES=[
+"Could you tell me where the library is?",
+"I wonder whether the museum opens on Sundays.",
+"Have you decided which course you will take?",
+"She asked me if I had finished the report.",
+"The professor wants to know when the essay is due.",
+"Do you know how long the bus trip takes?",
+"Nobody told me that the meeting had been cancelled.",
+"What I enjoyed most was the final presentation.",
+"I would rather study in the morning than at night.",
+"Make sure you send the form before Friday.",
+];
+const READINGS=[
+{t:"The Fog Oases of the Peruvian Coast",tag:"Ciencias naturales · 4 preguntas",
+p:["Along the desert coast of Peru, where rain may not fall for years, small islands of green appear each winter. These ecosystems, known as lomas, depend not on rain but on fog. From June to October, cool ocean currents chill the air above the sea, producing a dense layer of low cloud that local people call garúa. When this cloud meets the coastal hills, tiny droplets collect on leaves and stems and drip into the soil.",
+"The result is surprising biodiversity. Researchers have recorded hundreds of plant species in the lomas, and some of them grow nowhere else on Earth. Birds, insects and small mammals follow the seasonal bloom, and for centuries herders brought their animals to graze on the hills.",
+"Today the lomas face pressure from urban expansion, particularly around large cities. Some communities have responded by installing fog-catching nets, which capture moisture and redirect it to reforestation projects. Supporters argue that such nets could restore degraded slopes, although critics note that nets alone cannot replace the complex vegetation that once trapped water naturally. What is clear is that the lomas show how life can adapt to extreme scarcity, thereby offering lessons for other dry regions."],
+qs:[{q:"What is the main source of water for the lomas?",o:["Seasonal rainfall","Underground rivers","Fog from the ocean","Melting snow from the Andes"],a:2,w:"Párrafo 1: the ecosystems 'depend not on rain but on fog'."},
+{q:"The word “scarcity” in the last paragraph is closest in meaning to:",o:["abundance","shortage","danger","variety"],a:1,w:"Scarcity = escasez (shortage). Se relaciona con 'scarce'."},
+{q:"Why do critics doubt the fog-catching nets?",o:["They are too expensive to install","They damage native plants","They cannot fully replace the natural vegetation","They only work in summer"],a:2,w:"Último párrafo: los críticos dicen que las redes solas no reemplazan la vegetación compleja."},
+{q:"What can be inferred about the lomas outside the winter months?",o:["They are greener than in winter","They receive much less moisture","They are often flooded","They are used to grow crops"],a:1,w:"Pregunta de inferencia: la garúa ocurre de junio a octubre, así que el resto del año hay mucha menos humedad."}]},
+{t:"Why Spacing Beats Cramming",tag:"Psicología · 4 preguntas",
+p:["Students often prepare for exams by studying intensively the night before. This strategy, known as cramming, can produce reasonable results on a test the next morning. However, decades of research in cognitive psychology suggest that the information fades quickly afterward.",
+"An alternative is spaced practice: reviewing the same material several times with gaps between sessions. Each time a learner returns to a fact that is starting to fade, retrieving it requires effort, and this effort appears to strengthen memory. The phenomenon is sometimes called “desirable difficulty”: a task that feels harder in the moment but yields better long-term learning.",
+"Spacing works especially well when combined with self-testing. Rather than rereading notes, learners who try to recall answers from memory tend to remember more weeks later. Despite this evidence, many students remain reluctant to change their habits, partly because rereading feels productive while testing exposes what they do not yet know."],
+qs:[{q:"What is the main idea of the passage?",o:["Cramming is the most efficient way to pass exams","Spaced practice and self-testing improve long-term memory","Research in psychology is often unreliable","Rereading notes is necessary before any test"],a:1,w:"El texto contrasta cramming con spacing + self-testing y concluye a favor de estos últimos."},
+{q:"In the passage, “desirable difficulty” refers to:",o:["a test that is unfair","effort that ends up improving learning","a subject that is boring","a speed-reading technique"],a:1,w:"Se define como una tarea que se siente más difícil pero produce mejor aprendizaje."},
+{q:"According to the passage, why are many students reluctant to change?",o:["Self-testing is expensive","Rereading feels productive","Teachers do not allow spacing","Spacing takes several years"],a:1,w:"Última oración: rereading feels productive, mientras que el test muestra lo que aún no saben."},
+{q:"The word “yields” in paragraph 2 is closest in meaning to:",o:["produces","refuses","delays","measures"],a:0,w:"Yield = produce (un resultado). Está en tu lista de vocabulario."}]},
+];
+const PROMPTS=[
+{id:"i1",ex:"IELTS",kind:"Writing Task 2",min:40,words:250,mode:"write",text:"Some people believe that university education should be free for everyone. Others think that students should pay for their own studies. Discuss both views and give your own opinion."},
+{id:"i2",ex:"IELTS",kind:"Writing Task 2",min:40,words:250,mode:"write",text:"In many countries, people are moving from rural areas to large cities. What problems does this cause, and what solutions can you suggest?"},
+{id:"i3",ex:"IELTS",kind:"Writing Task 2",min:40,words:250,mode:"write",text:"Some people think that technology has made us less social. To what extent do you agree or disagree?"},
+{id:"i4",ex:"IELTS",kind:"Writing Task 2",min:40,words:250,mode:"write",text:"Governments should spend more money on public transport than on building new roads. To what extent do you agree or disagree?"},
+{id:"t1",ex:"TOEFL",kind:"Write an Email",min:7,words:100,mode:"write",text:"You enrolled in an online course, but the lecture videos keep failing to load. Write an email to the course coordinator. In your email: explain the problem, describe what you have already tried, and ask for a specific solution."},
+{id:"t2",ex:"TOEFL",kind:"Write an Email",min:7,words:100,mode:"write",text:"Your neighbor's dog barks late at night and you cannot sleep. Write an email to your neighbor. In your email: describe the situation, explain how it affects you, and suggest a solution."},
+{id:"t3",ex:"TOEFL",kind:"Academic Discussion",min:10,words:100,mode:"write",text:"Professor: This week we are studying urban planning. Some cities have banned private cars from their historic centers. Is this a good policy? Why or why not?\n\nLucía: I support it. Old streets were not designed for traffic, and the pollution damages the buildings.\n\nMarco: I disagree. Many older people and small shop owners depend on cars, and a ban could hurt local businesses.\n\nWrite a response that adds your own idea to the discussion."},
+{id:"t4",ex:"TOEFL",kind:"Academic Discussion",min:10,words:100,mode:"write",text:"Professor: Some universities now allow students to use AI tools when writing essays, as long as they disclose it. Should all universities adopt this policy?\n\nAna: Yes. Professionals already use these tools, so students should learn to use them responsibly.\n\nDiego: No. If students rely on AI, they will never develop their own writing skills.\n\nWrite a response that adds your own idea to the discussion."},
+{id:"s1",ex:"IELTS",kind:"Speaking Part 2",min:2,prep:1,mode:"speak",text:"Describe a skill you learned outside school.\nYou should say:\n• what the skill is\n• how you learned it\n• how long it took you\nand explain why this skill is useful to you."},
+{id:"s2",ex:"IELTS",kind:"Speaking Part 2",min:2,prep:1,mode:"speak",text:"Describe a place in your country that you think tourists should visit.\nYou should say:\n• where it is\n• how you know about it\n• what people can do there\nand explain why you would recommend it."},
+{id:"s3",ex:"IELTS",kind:"Speaking Part 2",min:2,prep:1,mode:"speak",text:"Describe a time when you had to wait for something for a long time.\nYou should say:\n• what you were waiting for\n• where you were\n• how long you waited\nand explain how you felt while waiting."},
+{id:"s4",ex:"TOEFL",kind:"Take an Interview",min:1,prep:0,mode:"speak",text:"Interviewer: Some people prefer to study alone, while others prefer to study in groups. Which do you prefer, and why? Give a specific example from your own experience."},
+];
+const CHECKS={
+"Writing Task 2":["Mi postura queda clara en la introducción","Cada párrafo del cuerpo tiene una idea principal","Di ejemplos concretos","Usé conectores variados (however, moreover, as a result…)","Escribí una conclusión que repite mi postura","Pasé de 250 palabras"],
+"Write an Email":["Saludo y cierre adecuados","Cubrí los tres puntos que pide la consigna","Tono educado y directo","Revisé ortografía y tiempos verbales"],
+"Academic Discussion":["Mencioné a un compañero (I agree with Lucía that…)","Aporté una idea nueva, no repetí las suyas","Di una razón y un ejemplo","Pasé de 100 palabras"],
+"Speaking Part 2":["Hablé casi los 2 minutos completos","Cubrí todos los puntos de la tarjeta","Usé al menos un tiempo pasado y uno futuro/condicional","Usé 2 palabras del vocabulario"],
+"Take an Interview":["Respondí directamente en la primera oración","Di un ejemplo personal","Terminé con una conclusión breve"],
+};
+
+/* ============ content: logic ============ */
+const WORDS="about:acerca de|above:encima|actor:actor|admit:admitir|adult:adulto|after:después|again:otra vez|agree:estar de acuerdo|ahead:adelante|alarm:alarma|alive:vivo|allow:permitir|alone:solo|among:entre|angle:ángulo|angry:enojado|apple:manzana|apply:postular, aplicar|argue:discutir|arise:surgir|avoid:evitar|award:premio|aware:consciente|basic:básico|beach:playa|begin:empezar|being:ser|below:debajo|birth:nacimiento|black:negro|blame:culpar|blind:ciego|board:tablero, pizarra|brain:cerebro|brave:valiente|bread:pan|break:romper, descanso|brief:breve|bring:traer|broad:amplio|build:construir|buyer:comprador|carry:llevar|catch:atrapar|cause:causa|chain:cadena|chair:silla|cheap:barato|check:revisar|chest:pecho|chief:jefe|child:niño|civil:civil|claim:afirmar|class:clase|clean:limpio|clear:claro|climb:escalar|clock:reloj|close:cerrar, cerca|cloud:nube|coach:entrenador|coast:costa|count:contar|court:tribunal|cover:cubrir|crime:delito|crowd:multitud|daily:diario|dance:bailar|death:muerte|delay:retraso|depth:profundidad|doubt:duda|draft:borrador|drama:drama|dream:sueño|drink:beber|drive:conducir|early:temprano|earth:tierra|enemy:enemigo|enjoy:disfrutar|enter:entrar|equal:igual|error:error|event:evento|exact:exacto|exist:existir|faith:fe|false:falso|fault:culpa|field:campo|fight:pelear|final:final|float:flotar|floor:piso|focus:enfoque|force:fuerza|frame:marco|fresh:fresco|front:frente|fruit:fruta|funny:gracioso|giant:gigante|glass:vidrio|grade:nota, grado|grant:beca, otorgar|green:verde|guess:adivinar|guest:invitado|guide:guía|habit:hábito|happy:feliz|heart:corazón|heavy:pesado|horse:caballo|hotel:hotel|house:casa|human:humano|ideal:ideal|image:imagen|issue:asunto, problema|judge:juez|knife:cuchillo|large:grande|later:luego|laugh:reír|layer:capa|learn:aprender|least:mínimo|leave:salir, dejar|legal:legal|level:nivel|light:luz|limit:límite|local:local|lucky:afortunado|lunch:almuerzo|major:principal|maker:fabricante|march:marchar|match:partido, coincidir|maybe:quizás|mayor:alcalde|metal:metal|minor:menor|model:modelo|money:dinero|month:mes|moral:moral|motor:motor|mount:montar|mouse:ratón|mouth:boca|movie:película|music:música|night:noche|noise:ruido|north:norte|novel:novela|nurse:enfermera|ocean:océano|offer:ofrecer|often:a menudo|order:orden, pedir|other:otro|owner:dueño|paint:pintar|panel:panel|paper:papel|party:fiesta, partido|peace:paz|phase:fase|phone:teléfono|piece:pieza|pilot:piloto|place:lugar|plain:simple, llano|plane:avión|plant:planta|plate:plato|point:punto|power:poder|press:presionar, prensa|price:precio|pride:orgullo|prize:premio|proof:prueba|proud:orgulloso|quiet:tranquilo|quite:bastante|radio:radio|raise:levantar, criar|range:rango|rapid:rápido|ratio:proporción|reach:alcanzar|ready:listo|refer:referirse|relax:relajarse|reply:responder|right:correcto, derecho|river:río|rough:áspero|round:redondo|route:ruta|rural:rural|scale:escala|scene:escena|scope:alcance|score:puntaje|sense:sentido|serve:servir|seven:siete|shape:forma|share:compartir|sharp:afilado|sheep:oveja|shift:turno, cambio|shirt:camisa|shock:choque|short:corto|sight:vista|skill:habilidad|sleep:dormir|small:pequeño|smart:inteligente|smile:sonreír|solid:sólido|solve:resolver|sorry:perdón|sound:sonido|south:sur|space:espacio|speak:hablar|speed:velocidad|spend:gastar|sport:deporte|staff:personal|stage:etapa|stand:estar de pie|start:empezar|state:estado|steal:robar|steel:acero|stone:piedra|store:tienda|storm:tormenta|story:historia|study:estudiar|style:estilo|sugar:azúcar|table:mesa|teach:enseñar|thank:agradecer|theme:tema|thing:cosa|think:pensar|third:tercero|tired:cansado|title:título|today:hoy|topic:tema|total:total|touch:tocar|tower:torre|trade:comercio|train:tren, entrenar|treat:tratar|trend:tendencia|trial:juicio, prueba|truck:camión|trust:confiar|truth:verdad|twice:dos veces|uncle:tío|under:debajo|union:unión|until:hasta|upper:superior|urban:urbano|usual:usual|value:valor|video:video|visit:visitar|vital:vital|voice:voz|waste:desperdiciar|watch:mirar, reloj|water:agua|wheel:rueda|while:mientras|white:blanco|whole:entero|woman:mujer|world:mundo|worry:preocuparse|worth:valor|write:escribir|wrong:incorrecto|young:joven|youth:juventud".split("|").map(x=>x.split(":"));
+
+/* ============ content: Claude ============ */
+const LESSONS=[
+{t:"Da contexto antes de pedir",b:"Claude no sabe quién eres ni para qué lo necesitas. Dos o tres líneas de contexto (tu nivel, tu objetivo, tus límites) cambian por completo la respuesta.",bad:"Hazme un plan de estudio de inglés.",good:"Preparo el IELTS Academic para dentro de 3 meses. Mi nivel es B2 y busco banda 7. Tengo 1 hora por noche y casi nunca tengo internet. Hazme un plan semanal que pueda seguir sin conexión."},
+{t:"Pide el formato exacto",b:"Si quieres una tabla, una lista corta o un texto de 100 palabras, dilo. Claude adapta la forma de la respuesta a lo que pidas.",bad:"Dame vocabulario para el TOEFL.",good:"Dame 15 palabras académicas para el TOEFL en una tabla con columnas: palabra, traducción, definición en inglés simple y un ejemplo sobre medio ambiente."},
+{t:"Muestra un ejemplo",b:"Un ejemplo vale más que una descripción larga. Si tienes un modelo de lo que quieres, pégalo y pide 'algo como esto'.",bad:"Hazme preguntas de práctica.",good:"Hazme 10 preguntas de gramática como esta: 'If I ___ more time, I would travel. (a) have (b) had'. Incluye la respuesta y una explicación de una línea en español."},
+{t:"Divide las tareas grandes",b:"Para algo grande, ve por partes: primero un diagnóstico, luego un plan, luego el material. Revisas cada paso antes de seguir y el resultado sale más ajustado.",bad:"Prepárame para el TOEFL.",good:"Paso 1: hazme 10 preguntas cortas para estimar mi nivel en reading y writing. Cuando te responda, pasamos al plan."},
+{t:"Deja que Claude te pregunte",b:"Cuando no sabes qué información dar, pide que te entreviste primero. Así evitas respuestas genéricas.",bad:"Ayúdame con mi carta de motivación.",good:"Voy a escribir una carta de motivación para una beca de maestría. Antes de redactar nada, hazme las preguntas que necesites para que la carta suene a mí."},
+{t:"Dale un papel y un criterio",b:"Pedir que actúe como examinador, profesor o editor, y decirle con qué criterio evaluar, hace que el feedback sea mucho más útil.",bad:"¿Está bien mi ensayo?",good:"Actúa como examinador del IELTS. Califica mi ensayo de Task 2 con los cuatro criterios oficiales, da una banda estimada para cada uno y dime los 3 cambios que más subirían mi nota."},
+{t:"Corrige con precisión, no empieces de cero",b:"Si la respuesta casi está bien, di exactamente qué cambiar: más corto, más formal, sin el tercer punto. Es más rápido que reescribir el pedido.",bad:"No me gustó, hazlo otra vez.",good:"Está bien, pero hazlo más corto (máximo 120 palabras), usa un tono menos formal y quita el ejemplo de economía."},
+{t:"Adjunta en vez de describir",b:"Puedes subir un PDF, una foto de tu cuaderno o una captura. Claude lo lee directamente y no tienes que transcribir nada.",bad:"Tengo un examen de práctica con muchas preguntas de reading, ¿me ayudas?",good:"[adjunto foto del ejercicio] Explícame por qué la respuesta correcta de la pregunta 3 es la C y no la B."},
+{t:"Pide que verifique y que diga cuando no sabe",b:"Para datos que cambian (fechas de examen, precios, requisitos) pide que busque en la web y cite fuentes. También puedes pedir que te avise si algo es incierto.",bad:"¿Cuánto cuesta el TOEFL?",good:"Busca en la web cuánto cuesta hoy el TOEFL iBT en Perú y en qué sedes de Lima se puede rendir. Cita las fuentes."},
+{t:"Pide cosas que puedas guardar",b:"Además de texto en el chat, Claude puede crear documentos, tablas, presentaciones y pequeñas apps (como esta). Pídelo directamente.",bad:"Escríbeme las reglas de gramática.",good:"Hazme un documento de repaso con las 20 reglas de gramática que más se evalúan en el IELTS, con un ejemplo correcto y uno incorrecto de cada una."},
+{t:"Prepara tus prompts sin conexión",b:"Aprovecha la noche para escribir tus preguntas con calma en la lista 'Para mañana'. Al día siguiente, con internet, solo copias y pegas. Pensar el prompt con tiempo suele dar mejores resultados.",bad:"(Escribir a la carrera cuando vuelve la señal)",good:"Mañana con internet: pegar mi ensayo de esta noche + pedir evaluación como examinador IELTS."},
+];
+const CLAUDE_QUIZ=[
+{q:"¿Cuál de estos prompts probablemente dará la respuesta más útil?",o:["Ayúdame con inglés","Explícame la gramática","Soy B2, rindo el IELTS en marzo y confundo el presente perfecto con el pasado simple. Explícamelo con 5 ejemplos y 5 ejercicios.","Inglés por favor"],a:2,w:"Tiene contexto (nivel, examen, fecha), un problema concreto y un formato claro."},
+{q:"La respuesta de Claude está casi bien, pero es muy larga. ¿Qué conviene hacer?",o:["Abrir un chat nuevo y repetir el pedido","Decirle exactamente: 'resúmelo en 5 viñetas'","Enviar el mismo mensaje otra vez","Aceptarla tal cual"],a:1,w:"Corregir con una instrucción precisa aprovecha lo que ya está bien."},
+{q:"Quieres feedback de tu ensayo IELTS. ¿Qué información extra es la más valiosa?",o:["La consigna del ensayo y la banda que buscas","Tu color favorito","Cuántas horas dormiste","Nada, solo el texto"],a:0,w:"Con la consigna Claude puede evaluar si respondiste la tarea; con la banda objetivo calibra el feedback."},
+{q:"¿Para qué sirve pedirle a Claude que te haga preguntas antes de empezar?",o:["Para que la conversación sea más larga","Para que reúna el contexto que te faltó dar","Para comprobar si eres humano","No sirve de nada"],a:1,w:"Así cubre los datos que no se te ocurrió mencionar y la respuesta sale personalizada."},
+{q:"Necesitas el costo actual de un examen. ¿Qué es lo más seguro?",o:["Confiar en el primer número que dé","Pedir que busque en la web y cite la fuente","Preguntar tres veces","Adivinar"],a:1,w:"Precios y requisitos cambian; con búsqueda web y fuentes puedes verificarlo tú mismo."},
+{q:"¿Por qué ayuda incluir un ejemplo de lo que quieres?",o:["Porque muestra el estilo y formato mejor que una descripción","Porque Claude no entiende instrucciones","Porque es obligatorio","No ayuda"],a:0,w:"Un ejemplo concreto elimina ambigüedad sobre tono, longitud y estructura."},
+{q:"Tienes una tarea grande (prepararte para el TOEFL en 2 meses). ¿Cuál es el mejor enfoque?",o:["Pedirlo todo en una sola línea","Dividirlo: diagnóstico, luego plan, luego material","No usar Claude para eso","Pedir solo el material"],a:1,w:"Por partes puedes revisar y ajustar cada paso antes de seguir."},
+{q:"Esta noche no tienes internet. ¿Cuál es la mejor forma de aprovecharla para mañana?",o:["Nada, esperar","Escribir con calma tus prompts y tu trabajo para pegarlos mañana","Memorizar respuestas","Borrar tus apuntes"],a:1,w:"Pensar el prompt sin apuro y llevar material propio (ensayos, dudas) da mejores resultados."},
+];
+const PRACTICE=[
+{weak:"corrige mi ensayo",sc:"Escribiste un ensayo IELTS Task 2 y quieres saber qué banda sacarías.",model:"Estoy preparando el IELTS Academic y busco banda 7. Abajo pego la consigna y mi ensayo de Task 2. Califícalo con los cuatro criterios oficiales (Task Response, Coherence and Cohesion, Lexical Resource, Grammatical Range and Accuracy) con una banda estimada para cada uno. Luego lista mis 5 errores más repetidos con la corrección y reescribe solo mi párrafo más débil, sin cambiar mis ideas.",keys:["tu objetivo (banda)","pegar consigna + ensayo","criterio de evaluación","qué entregar y en qué orden","límite: no cambiar tus ideas"]},
+{weak:"dame palabras en inglés",sc:"Quieres vocabulario para el TOEFL que puedas repasar sin internet.",model:"Dame 20 palabras académicas frecuentes en el TOEFL sobre ciencia y medio ambiente, nivel B2–C1. Ponlas en una tabla con: palabra, categoría gramatical, traducción al español, definición simple en inglés y una oración de ejemplo. Evita palabras básicas como 'important' o 'problem'.",keys:["examen y tema","nivel","cantidad","formato tabla con columnas","qué excluir"]},
+{weak:"explícame el TOEFL",sc:"No sabes si te conviene el TOEFL o el IELTS para postular a una maestría.",model:"Quiero postular a una maestría en Europa en 2027. Compárame el TOEFL iBT y el IELTS Academic: formato actual, duración, costo en Perú y qué universidades europeas aceptan cada uno. Busca en la web para que los datos estén al día y cita las fuentes. Termina con una recomendación según mi perfil: hablo mejor de lo que escribo.",keys:["tu objetivo real","comparación concreta","pedir datos actuales con fuentes","tu perfil","cierre con recomendación"]},
+{weak:"hazme un juego",sc:"Quieres un juego para repasar vocabulario en el celular.",model:"Hazme una pequeña app web para iPhone que funcione sin internet: un juego de emparejar palabras en inglés con su traducción. Usa estas 30 palabras [lista]. Que tenga 3 niveles, guarde mi mejor puntaje y tenga diseño oscuro para usar de noche.",keys:["plataforma y restricción (offline)","mecánica clara","tu contenido","funciones concretas","estilo visual"]},
+{weak:"resume este pdf",sc:"Tienes un PDF de 40 páginas con estrategias de reading.",model:"[adjunto PDF] Es una guía de estrategias para el reading del IELTS. Resume las técnicas en máximo 10 viñetas, cada una con: cuándo usarla y un ejemplo de pregunta donde sirve. Ignora la parte de inscripción y precios.",keys:["adjuntar el archivo","decir qué es","longitud máxima","estructura de cada punto","qué ignorar"]},
+];
+
+/* ============ router ============ */
+const view=document.getElementById("view");
+let tab=S.get("tab","hoy"); const sub=S.get("sub",{ingles:"vocab",logica:"sudoku",claude:"lecciones"});
+let cleanup=null;
+function go(t,s){if(cleanup){cleanup();cleanup=null}tab=t;if(s)sub[t]=s;S.set("tab",tab);S.set("sub",sub);document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-current",b.dataset.tab===tab?"page":"false"));render();window.scrollTo(0,0)}
+document.querySelectorAll("nav.tabs button").forEach(b=>b.addEventListener("click",()=>go(b.dataset.tab)));
+function render(){view.className="fade";view.innerHTML="";({hoy:renderHoy,ingles:renderIngles,logica:renderLogica,claude:renderClaude})[tab]();void view.offsetWidth}
+function segs(section,items){const bar=document.createElement("div");bar.className="seg";bar.setAttribute("role","group");items.forEach(([k,l])=>{const b=document.createElement("button");b.textContent=l;b.setAttribute("aria-pressed",sub[section]===k);b.onclick=()=>go(section,k);bar.appendChild(b)});return bar}
+function el(html){const d=document.createElement("div");d.innerHTML=html.trim();return d.firstElementChild}
+
+/* ============ HOY ============ */
+function renderHoy(){
+  const h=new Date().getHours();const greet=h<12?"Buenos días":h<19?"Buenas tardes":"Buenas noches";
+  const p=prog();const boxes=S.get("vbox",{});const mastered=Object.values(boxes).filter(b=>b.l>=3).length;
+  const plan=[["vocab","10 tarjetas de vocabulario","Inglés","ingles","vocab"],["frases","Ordena frases (Build a Sentence)","Inglés","ingles","frases"],["juego","Un juego de lógica","Lógica","logica",sub.logica],["claude","Una lección o reto de prompts","Claude","claude","lecciones"]];
+  const done=plan.filter(x=>doneToday(x[0])).length;const man=S.get("manana",[]).length;
+  const on=navigator.onLine;
+  view.appendChild(el(`<div class="stack-lg">
+  <section class="hero stack"><span class="net ${on?"on":""}"><i></i>${on?"Con conexión":"Sin conexión · todo funciona igual"}</span><h1>${greet}.</h1><p class="muted">${done===4?"Completaste el plan de hoy. Puedes seguir jugando o dormir tranquilo.":"Tu sesión de hoy: unos 30 minutos entre inglés, lógica y Claude."}</p></section>
+  <div class="stats"><div class="stat"><div class="n">${streak()}</div><div class="k">días seguidos</div></div><div class="stat"><div class="n">${p.xp}</div><div class="k">XP total</div></div><div class="stat"><div class="n">${mastered}<span class="muted small">/${VOCAB.length}</span></div><div class="k">palabras dominadas</div></div></div>
+  <section class="stack"><div class="row" style="justify-content:space-between"><h2>Plan de hoy</h2><span class="pill">${done}/4</span></div><div class="bar"><i style="width:${done*25}%"></i></div><div class="list" id="plan"></div></section>
+  <section class="stack"><h2>Para mañana</h2><button class="item" id="goMan"><div class="grow"><div class="t">${man?man+" prompt"+(man>1?"s":"")+" listo"+(man>1?"s":"")+" para Claude":"Aún no guardas prompts"}</div><div class="s">Escríbelos de noche, cópialos cuando tengas señal.</div></div><span class="muted">›</span></button></section>
+  </div>`));
+  const list=view.querySelector("#plan");
+  plan.forEach(([k,t,s,tb,sb])=>{const b=el(`<button class="item"><span class="tick ${doneToday(k)?"on":""}">${doneToday(k)?"✓":""}</span><div class="grow"><div class="t">${t}</div><div class="s">${s}</div></div><span class="muted">›</span></button>`);b.onclick=()=>go(tb,sb);list.appendChild(b)});
+  view.querySelector("#goMan").onclick=()=>go("claude","manana");
+}
+
+/* ============ generic quiz ============ */
+function runQuiz(host,qs,opts){
+  opts=opts||{};let i=0,score=0;
+  function show(){
+    if(i>=qs.length){host.innerHTML="";const pct=Math.round(score/qs.length*100);const r=el(`<div class="card stack"><span class="label">Resultado</span><h2>${score} de ${qs.length} correctas</h2><div class="bar"><i style="width:${pct}%"></i></div><p class="muted">${pct===100?"Perfecto.":pct>=70?"Muy bien. Repasa las explicaciones de las que fallaste.":"Vuelve a intentarlo mañana: la repetición espaciada funciona."}</p><button class="btn" id="again">Otra vez</button></div>`);host.appendChild(r);r.querySelector("#again").onclick=()=>{i=0;score=0;if(opts.reshuffle)qs=shuffle(qs);show()};if(opts.onDone)opts.onDone(score,qs.length);return}
+    const q=qs[i];host.innerHTML="";
+    const c=el(`<div class="stack"><div class="row" style="justify-content:space-between"><span class="label">Pregunta ${i+1} de ${qs.length}</span><span class="pill">${score} ✓</span></div><div class="bar"><i style="width:${i/qs.length*100}%"></i></div><p class="q">${esc(q.q)}</p><div class="opts"></div><div class="fb"></div></div>`);
+    const o=c.querySelector(".opts");
+    q.o.forEach((t,j)=>{const b=document.createElement("button");b.className="opt";b.textContent=t;b.onclick=()=>{if(o.dataset.done)return;o.dataset.done=1;const ok=j===q.a;if(ok){score++;award(null,5)}b.classList.add(ok?"ok":"bad");o.children[q.a].classList.add("ok");const fb=c.querySelector(".fb");fb.className="stack";fb.appendChild(el(`<div class="why"><b>${ok?"Correcto.":"No exactamente."}</b> ${q.w||""}</div>`));const n=el(`<button class="btn full">${i+1<qs.length?"Siguiente":"Ver resultado"}</button>`);n.onclick=()=>{i++;show()};fb.appendChild(n)};o.appendChild(b)});
+    host.appendChild(c);
+  }
+  show();
+}
+
+/* ============ INGLÉS ============ */
+function renderIngles(){
+  view.appendChild(el(`<div class="stack" style="margin-bottom:18px"><h1>Inglés</h1><p class="muted small">TOEFL iBT e IELTS Academic</p></div>`));
+  view.appendChild(segs("ingles",[["vocab","Vocabulario"],["gram","Gramática"],["frases","Frases"],["lectura","Lectura"],["prod","Escribir y hablar"],["formato","Formato"]]));
+  const host=el(`<div class="stack" style="margin-top:18px"></div>`);view.appendChild(host);
+  ({vocab:vocabView,gram:()=>{host.appendChild(el(`<p class="muted">Errores típicos que restan puntos en Writing y Speaking.</p>`));const q=el("<div></div>");host.appendChild(q);runQuiz(q,shuffle(GRAMMAR).slice(0,10),{reshuffle:true,onDone:(s)=>award("gram",10)})},frases:frasesView,lectura:lecturaView,prod:prodView,formato:formatoView})[sub.ingles](host);
+}
+function vocabView(host){
+  const boxes=S.get("vbox",{});const t=dayStr();
+  const due=VOCAB.filter(v=>boxes[v[0]]&&boxes[v[0]].due<=t);const fresh=VOCAB.filter(v=>!boxes[v[0]]);
+  const top=el(`<div class="row"><button class="btn" id="fc">Tarjetas (${Math.min(10,due.length+fresh.length)||10})</button><button class="btn ghost" id="vq">Quiz de definiciones</button></div>`);
+  host.appendChild(top);host.appendChild(el(`<p class="muted small">${due.length} para repasar hoy · ${fresh.length} nuevas · repaso espaciado: las que sabes vuelven en 1, 2, 4, 7, 14 y 30 días.</p>`));
+  const area=el(`<div class="stack"></div>`);host.appendChild(area);
+  top.querySelector("#fc").onclick=()=>{let deck=shuffle(due).concat(shuffle(fresh));if(deck.length<10)deck=deck.concat(shuffle(VOCAB.filter(v=>!deck.includes(v))));deck=deck.slice(0,10);let i=0,known=0;
+    function card(){area.innerHTML="";if(i>=deck.length){award("vocab",20);area.appendChild(el(`<div class="card stack"><span class="label">Sesión terminada</span><h2>${known} de ${deck.length} las sabías</h2><p class="muted">Las que marcaste para repasar volverán mañana.</p></div>`));return}
+      const v=deck[i];let flipped=false;
+      const c=el(`<div class="stack"><div class="row" style="justify-content:space-between"><span class="label">${i+1} / ${deck.length}</span><span class="pill">${v[1]}</span></div><div class="card flash" role="button" tabindex="0" aria-label="Voltear tarjeta"><div class="w">${v[0]}</div><div class="muted small">Toca para ver el significado</div></div><div class="row" id="ans" hidden><button class="btn ghost" style="flex:1" id="no">Repasar</button><button class="btn" style="flex:1" id="si">La sabía</button></div></div>`);
+      const f=c.querySelector(".flash");const flip=()=>{if(flipped)return;flipped=true;f.innerHTML=`<div class="w" style="font-size:1.6rem">${v[0]}</div><div><b>${esc(v[2])}</b></div><div>${esc(v[3])}</div><div class="ex">“${esc(v[4])}”</div>`;c.querySelector("#ans").hidden=false};
+      f.onclick=flip;f.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();flip()}};
+      const rate=ok=>{const b=boxes[v[0]]||{l:0};const iv=[1,2,4,7,14,30];if(ok){known++;b.l=Math.min(b.l+1,6);b.due=addDays(t,iv[b.l-1])}else{b.l=0;b.due=addDays(t,1)}boxes[v[0]]=b;S.set("vbox",boxes);award(null,2);i++;card()};
+      c.querySelector("#si").onclick=()=>rate(true);c.querySelector("#no").onclick=()=>rate(false);area.appendChild(c)}
+    card()};
+  top.querySelector("#vq").onclick=()=>{area.innerHTML="";const qs=shuffle(VOCAB).slice(0,8).map(v=>{const others=shuffle(VOCAB.filter(x=>x!==v)).slice(0,3).map(x=>x[0]);const o=shuffle([v[0],...others]);return{q:"Which word means: “"+v[3]+"”?",o,a:o.indexOf(v[0]),w:"<b>"+v[0]+"</b> ("+esc(v[2])+"). “"+esc(v[4])+"”"}});runQuiz(area,qs,{onDone:()=>award("vocab",10)})};
+}
+function frasesView(host){
+  host.appendChild(el(`<p class="muted">Como la tarea <b>Build a Sentence</b> del TOEFL: toca las palabras en orden. Ojo con las preguntas indirectas.</p>`));
+  const area=el(`<div class="stack"></div>`);host.appendChild(area);
+  const order=shuffle(SENTENCES).slice(0,6);let i=0,score=0;
+  function next(){area.innerHTML="";
+    if(i>=order.length){award("frases",15);area.appendChild(el(`<div class="card stack"><span class="label">Listo</span><h2>${score} de ${order.length} al primer intento</h2><button class="btn" id="re">Otra ronda</button></div>`));area.querySelector("#re").onclick=()=>{host.innerHTML="";frasesView(host)};return}
+    const s=order[i];const words=s.split(" ");let pool=shuffle(words.map((w,k)=>({w,k})));if(pool.map(x=>x.w).join(" ")===s)pool=pool.reverse();let picked=[];let tries=0;
+    const c=el(`<div class="stack"><span class="label">${i+1} / ${order.length}</span><div class="slots" aria-live="polite"></div><div class="row" id="pool"></div><div class="row"><button class="btn ghost" id="clr">Borrar</button><button class="btn" id="chk" style="flex:1">Comprobar</button></div><div class="fb stack"></div></div>`);
+    const slots=c.querySelector(".slots"),pl=c.querySelector("#pool");
+    function draw(){slots.innerHTML="";pl.innerHTML="";picked.forEach((x,n)=>{const b=el(`<button class="tok">${esc(x.w)}</button>`);b.onclick=()=>{picked.splice(n,1);draw()};slots.appendChild(b)});pool.filter(x=>!picked.includes(x)).forEach(x=>{const b=el(`<button class="tok">${esc(x.w)}</button>`);b.onclick=()=>{picked.push(x);draw()};pl.appendChild(b)})}
+    draw();
+    c.querySelector("#clr").onclick=()=>{picked=[];draw()};
+    c.querySelector("#chk").onclick=()=>{if(picked.length<words.length){toast("Usa todas las palabras");return}tries++;const ans=picked.map(x=>x.w).join(" ");const fb=c.querySelector(".fb");fb.innerHTML="";if(ans===s){if(tries===1)score++;award(null,5);fb.appendChild(el(`<div class="why"><b>Correcto.</b></div>`));const n=el(`<button class="btn full">Siguiente</button>`);n.onclick=()=>{i++;next()};fb.appendChild(n);c.querySelector("#chk").disabled=true}else{fb.appendChild(el(`<div class="why"><b>Todavía no.</b> ${tries>=2?"Respuesta: <i>"+esc(s)+"</i>":"Revisa el orden de sujeto y verbo."}</div>`));if(tries>=2){const n=el(`<button class="btn full">Siguiente</button>`);n.onclick=()=>{i++;next()};fb.appendChild(n)}}};
+    area.appendChild(c)}
+  next();
+}
+function lecturaView(host){
+  const list=el(`<div class="list"></div>`);host.appendChild(list);
+  READINGS.forEach((r,k)=>{const b=el(`<button class="item"><div class="grow"><div class="t">${esc(r.t)}</div><div class="s">${r.tag}</div></div><span class="muted">›</span></button>`);b.onclick=()=>{host.innerHTML="";const back=el(`<button class="btn ghost" style="align-self:flex-start">‹ Lecturas</button>`);back.onclick=()=>{host.innerHTML="";lecturaView(host)};host.appendChild(back);host.appendChild(el(`<article class="card passage stack"><span class="label">Lee con calma · unos 4 minutos</span><h2>${esc(r.t)}</h2><div>${r.p.map(x=>"<p>"+esc(x)+"</p>").join("")}</div></article>`));const q=el("<div class='card'></div>");host.appendChild(q);runQuiz(q,r.qs,{onDone:()=>award("lectura",15)})};list.appendChild(b)});
+}
+function prodView(host){
+  host.appendChild(el(`<p class="muted">Practica con tiempo real. Al terminar, guárdalo en <b>Para mañana</b> con un prompt listo para que Claude te califique.</p>`));
+  const list=el(`<div class="list"></div>`);host.appendChild(list);const drafts=S.get("drafts",{});
+  PROMPTS.forEach(p=>{const b=el(`<button class="item"><div class="grow"><div class="t">${p.ex} · ${p.kind}</div><div class="s">${esc(p.text.split("\n")[0].slice(0,90))}…</div></div><span class="pill">${p.mode==="write"?p.min+" min":(p.prep?"1+2 min":"45 s")}</span>${drafts[p.id]?'<span class="tick on">✓</span>':""}</button>`);b.onclick=()=>{host.innerHTML="";task(host,p)};list.appendChild(b)});
+}
+function timerUI(seconds,onEnd){
+  const w=el(`<div class="row" style="justify-content:space-between"><div class="timer">${fmt(seconds)}</div><div class="row"><button class="btn" data-a="go">Iniciar</button><button class="btn ghost" data-a="rs">Reiniciar</button></div></div>`);
+  let left=seconds,iv=null;const d=w.querySelector(".timer"),g=w.querySelector('[data-a="go"]');
+  function tick(){left--;d.textContent=fmt(Math.max(left,0));if(left<=0){stop();d.classList.add("end");g.disabled=true;onEnd&&onEnd()}}
+  function stop(){clearInterval(iv);iv=null;g.textContent="Seguir";keepAwake(false)}
+  g.onclick=()=>{if(iv){stop()}else{iv=setInterval(tick,1000);g.textContent="Pausa";keepAwake(true)}};
+  w.querySelector('[data-a="rs"]').onclick=()=>{stop();left=seconds;d.textContent=fmt(left);d.classList.remove("end");g.disabled=false;g.textContent="Iniciar"};
+  w.stop=stop;w.set=(s)=>{stop();seconds=left=s;d.textContent=fmt(s);d.classList.remove("end");g.disabled=false;g.textContent="Iniciar"};
+  return w;
+}
+function fmt(s){return Math.floor(s/60)+":"+pad2(s%60)}
+function task(host,p){
+  const back=el(`<button class="btn ghost" style="align-self:flex-start">‹ Tareas</button>`);back.onclick=()=>{cleanup&&cleanup();cleanup=null;host.innerHTML="";prodView(host)};host.appendChild(back);
+  host.appendChild(el(`<div class="card stack"><span class="label">${p.ex} · ${p.kind}</span><p style="white-space:pre-wrap">${esc(p.text)}</p></div>`));
+  let t;
+  if(p.mode==="write"){
+    t=timerUI(p.min*60,()=>toast("Se acabó el tiempo"));host.appendChild(t);
+    const drafts=S.get("drafts",{});
+    const box=el(`<div class="stack"><textarea id="draft-${p.id}" placeholder="Write your answer here…" spellcheck="false" autocapitalize="sentences"></textarea><div class="row" style="justify-content:space-between"><span class="small muted" id="wc">0 palabras</span><span class="small muted">Meta: ${p.words}+ · se guarda solo</span></div></div>`);
+    const ta=box.querySelector("textarea");ta.value=drafts[p.id]||"";const wc=box.querySelector("#wc");
+    const count=()=>{const n=(ta.value.trim().match(/\S+/g)||[]).length;wc.textContent=n+" palabras";wc.style.color=n>=p.words?"var(--ok)":"";return n};count();
+    ta.oninput=()=>{count();const d=S.get("drafts",{});d[p.id]=ta.value;S.set("drafts",d)};host.appendChild(box);
+    addChecks(host,p);
+    const save=el(`<button class="btn full">Guardar para revisar con Claude</button>`);save.onclick=()=>{const n=count();if(n<20){toast("Escribe un poco más primero");return}const exam=p.ex==="IELTS"?"IELTS Academic":"TOEFL iBT (formato 2026)";const crit=p.ex==="IELTS"?"Califícalo con los cuatro criterios oficiales (Task Response, Coherence and Cohesion, Lexical Resource, Grammatical Range and Accuracy) y da una banda estimada para cada uno.":"Califícalo con la escala de 0 a 5 que usa ETS para esta tarea, y dime cómo equivale a la escala de 1 a 6 del nuevo TOEFL.";
+      addManana(p.ex+" · "+p.kind,`Estoy preparando el ${exam}. Abajo está la consigna de una tarea "${p.kind}" y mi respuesta, escrita en ${p.min} minutos sin ayuda (${n} palabras). ${crit} Luego lista mis 5 errores más importantes con su corrección y reescribe mi respuesta como la escribiría alguien con nota alta, manteniendo mis ideas.\n\nCONSIGNA:\n${p.text}\n\nMI RESPUESTA:\n${ta.value.trim()}`);award("prod",25);toast("Guardado en Para mañana")};host.appendChild(save);
+  }else{
+    const stage=el(`<div class="card stack"><span class="label" id="ph">${p.prep?"Preparación · 1 minuto":"Respuesta · 45 segundos"}</span></div>`);
+    let phase=p.prep?0:1;t=timerUI(p.prep?60:(p.kind==="Take an Interview"?45:120),()=>{if(phase===0){phase=1;stage.querySelector("#ph").textContent="Ahora habla en voz alta · 2 minutos";t.set(120);toast("Empieza a hablar")}else{toast("Tiempo");award("prod",15)}});stage.appendChild(t);
+    if(p.prep)stage.appendChild(el(`<textarea placeholder="Notas rápidas (palabras clave, no oraciones)" style="min-height:110px"></textarea>`));
+    stage.appendChild(el(`<p class="small muted">Habla en voz alta aunque estés solo. Si puedes, grábate con la app Notas de voz del iPhone y escúchate después.</p>`));host.appendChild(stage);addChecks(host,p);
+  }
+  cleanup=()=>t&&t.stop&&t.stop();
+}
+function addChecks(host,p){const c=el(`<div class="card stack"><span class="label">Autoevaluación</span><div class="checks"></div></div>`);const k=c.querySelector(".checks");(CHECKS[p.kind]||[]).forEach((x,n)=>{const id="ck-"+p.id+"-"+n;k.appendChild(el(`<label for="${id}"><input type="checkbox" id="${id}"><span>${esc(x)}</span></label>`))});host.appendChild(c)}
+function formatoView(host){
+  host.appendChild(el(`<div class="card stack"><h2>TOEFL iBT (desde enero 2026)</h2><p class="muted small">Examen adaptativo, unas 2 horas. Puntaje de 1 a 6 por sección y total, con equivalencia a la escala antigua 0–120.</p><div class="tblwrap"><table class="fmt"><tr><th>Sección</th><th>Tareas</th></tr><tr><td>Reading</td><td>Complete the Words · Read in Daily Life · Read an Academic Passage</td></tr><tr><td>Listening</td><td>Listen and Choose a Response · Conversation · Announcement · Academic Talk</td></tr><tr><td>Writing</td><td>Build a Sentence · Write an Email (~7 min) · Academic Discussion (~10 min)</td></tr><tr><td>Speaking</td><td>Listen and Repeat · Take an Interview</td></tr></table></div></div>`));
+  host.appendChild(el(`<div class="card stack"><h2>IELTS Academic</h2><p class="muted small">Unas 2 h 45 min. Bandas de 0 a 9 por sección; el promedio da la banda total.</p><div class="tblwrap"><table class="fmt"><tr><th>Sección</th><th>Detalle</th></tr><tr><td>Listening</td><td>30 min · 4 partes · 40 preguntas</td></tr><tr><td>Reading</td><td>60 min · 3 textos largos · 40 preguntas</td></tr><tr><td>Writing</td><td>60 min · Task 1: describir un gráfico (150+ palabras) · Task 2: ensayo (250+ palabras, vale el doble)</td></tr><tr><td>Speaking</td><td>11–14 min con examinador · Parte 1 preguntas · Parte 2 monólogo de 2 min · Parte 3 discusión</td></tr></table></div></div>`));
+  host.appendChild(el(`<p class="small muted">Resumen de referencia. Fechas, precios y sedes cambian: verifícalos en ets.org/toefl e ielts.org cuando tengas conexión.</p>`));
+}
+
+/* ============ LÓGICA ============ */
+function renderLogica(){
+  view.appendChild(el(`<div class="stack" style="margin-bottom:18px"><h1>Lógica</h1><p class="muted small">Se guarda tu partida si cierras la app.</p></div>`));
+  view.appendChild(segs("logica",[["sudoku","Sudoku"],["palabra","Palabra"],["codigo","Código"]]));
+  const host=el(`<div class="stack" style="margin-top:18px"></div>`);view.appendChild(host);
+  ({sudoku:sudokuView,palabra:palabraView,codigo:codigoView})[sub.logica](host);
+}
+/* --- sudoku engine --- */
+function sdCands(g,i){const r=Math.floor(i/9),c=i%9,br=r-r%3,bc=c-c%3;const used=new Set();for(let k=0;k<9;k++){used.add(g[r*9+k]);used.add(g[k*9+c]);used.add(g[(br+Math.floor(k/3))*9+bc+k%3])}const out=[];for(let n=1;n<=9;n++)if(!used.has(n))out.push(n);return out}
+function sdSolve(g,limit,rand){let best=-1,bc=null;for(let i=0;i<81;i++){if(g[i])continue;const c=sdCands(g,i);if(!c.length)return 0;if(!bc||c.length<bc.length){best=i;bc=c;if(c.length===1)break}}if(best<0)return 1;let count=0;for(const n of(rand?shuffle(bc):bc)){g[best]=n;count+=sdSolve(g,limit-count,rand);if(count>=limit){if(rand)return count;g[best]=0;return count}}g[best]=0;return count}
+function sdGenerate(clues){const g=new Array(81).fill(0);sdSolve(g,1,true);const sol=g.slice();let filled=81;for(const i of shuffle([...Array(81).keys()])){if(filled<=clues)break;const v=g[i];g[i]=0;const t=g.slice();if(sdSolve(t,2,false)!==1){g[i]=v}else filled--}return{puz:g,sol}}
+function sudokuView(host){
+  let st=S.get("sudoku",null);
+  const levels={"Fácil":40,"Medio":32,"Difícil":26};
+  function newGame(lv){const {puz,sol}=sdGenerate(levels[lv]);st={lv,puz,sol,cur:puz.slice(),notes:Array.from({length:81},()=>[]),sel:-1,t:0,done:false,hints:0};S.set("sudoku",st);draw()}
+  let notesMode=false,iv=null;
+  const top=el(`<div class="row" style="justify-content:space-between"><div class="seg" id="lv"></div><span class="chip" id="clk">0:00</span></div>`);host.appendChild(top);
+  Object.keys(levels).forEach(l=>{const b=el(`<button>${l}</button>`);b.onclick=()=>newGame(l);top.querySelector("#lv").appendChild(b)});
+  const board=el(`<div class="sud" role="grid" aria-label="Sudoku"></div>`);host.appendChild(board);
+  const tools=el(`<div class="tools"><button id="nt" aria-pressed="false">Notas</button><button id="er">Borrar</button><button id="hn">Pista</button><button id="nw">Nuevo</button></div>`);host.appendChild(tools);
+  const padEl=el(`<div class="pad"></div>`);host.appendChild(padEl);
+  const msg=el(`<div></div>`);host.appendChild(msg);
+  for(let n=1;n<=9;n++){const b=el(`<button aria-label="Número ${n}">${n}</button>`);b.onclick=()=>input(n);padEl.appendChild(b)}
+  tools.querySelector("#nt").onclick=e=>{notesMode=!notesMode;e.currentTarget.setAttribute("aria-pressed",notesMode)};
+  tools.querySelector("#er").onclick=()=>input(0);
+  tools.querySelector("#hn").onclick=()=>{if(!st||st.done)return;let i=st.sel;if(i<0||st.puz[i]||st.cur[i]===st.sol[i]){const empties=[...Array(81).keys()].filter(k=>st.cur[k]!==st.sol[k]);if(!empties.length)return;i=empties[Math.floor(Math.random()*empties.length)]}st.cur[i]=st.sol[i];st.notes[i]=[];st.sel=i;st.hints++;save();draw();checkWin()};
+  tools.querySelector("#nw").onclick=()=>newGame(st?st.lv:"Fácil");
+  function save(){S.set("sudoku",st)}
+  function input(n){if(!st||st.done||st.sel<0||st.puz[st.sel])return;const i=st.sel;if(notesMode&&n){const a=st.notes[i];const k=a.indexOf(n);k>=0?a.splice(k,1):a.push(n);st.cur[i]=0}else{st.cur[i]=st.cur[i]===n?0:n;st.notes[i]=[];if(n){const r=Math.floor(i/9),c=i%9;for(let k=0;k<81;k++){const rr=Math.floor(k/9),cc=k%9;if(rr===r||cc===c||(Math.floor(rr/3)===Math.floor(r/3)&&Math.floor(cc/3)===Math.floor(c/3))){const x=st.notes[k].indexOf(n);if(x>=0)st.notes[k].splice(x,1)}}}}save();draw();checkWin()}
+  function checkWin(){if(st.cur.every((v,i)=>v===st.sol[i])&&!st.done){st.done=true;save();const xp={"Fácil":30,"Medio":50,"Difícil":80}[st.lv];award("juego",xp);msg.innerHTML="";msg.appendChild(el(`<div class="card stack"><span class="label">Resuelto</span><h2>${st.lv} en ${fmt(st.t)}</h2><p class="muted">${st.hints?st.hints+" pista"+(st.hints>1?"s":"")+" · ":""}+${xp} XP</p></div>`))}}
+  function draw(){
+    board.innerHTML="";if(!st){return}
+    top.querySelectorAll("#lv button").forEach(b=>b.setAttribute("aria-pressed",b.textContent===st.lv));
+    const s=st.sel,sv=s>=0?st.cur[s]:0,sr=Math.floor(s/9),sc=s%9;
+    for(let i=0;i<81;i++){const r=Math.floor(i/9),c=i%9;const b=document.createElement("button");const v=st.cur[i];
+      let cls=[];if(st.puz[i])cls.push("given");if(c%3===2)cls.push(c===8?"c9":"c3");if(r%3===2)cls.push(r===8?"r9":"r3");
+      if(s>=0){if(i===s)cls.push("sel");else if(sv&&v===sv)cls.push("same");else if(r===sr||c===sc||(Math.floor(r/3)===Math.floor(sr/3)&&Math.floor(c/3)===Math.floor(sc/3)))cls.push("peer")}
+      if(v&&!st.puz[i]&&v!==st.sol[i])cls.push("err");
+      b.className=cls.join(" ");b.setAttribute("aria-label","Fila "+(r+1)+" columna "+(c+1)+(v?" valor "+v:" vacía"));
+      if(v)b.textContent=v;else if(st.notes[i].length){b.innerHTML='<div class="notes">'+[1,2,3,4,5,6,7,8,9].map(n=>"<span>"+(st.notes[i].includes(n)?n:"")+"</span>").join("")+"</div>"}
+      b.onclick=()=>{st.sel=i;save();draw()};board.appendChild(b)}
+    [...padEl.children].forEach((b,k)=>{b.classList.toggle("done",st.cur.filter((v,i)=>v===k+1&&v===st.sol[i]).length===9)});
+    if(!st.done)msg.innerHTML="";
+  }
+  function clock(){const c=top.querySelector("#clk");if(c&&st)c.textContent=fmt(st.t)}
+  iv=setInterval(()=>{if(st&&!st.done&&!document.hidden){st.t++;if(st.t%5===0)save();clock()}},1000);
+  const key=e=>{if(/^[1-9]$/.test(e.key))input(+e.key);else if(e.key==="Backspace"||e.key==="Delete")input(0);else if(st&&st.sel>=0&&e.key.startsWith("Arrow")){const d={ArrowUp:-9,ArrowDown:9,ArrowLeft:-1,ArrowRight:1}[e.key];st.sel=(st.sel+d+81)%81;draw();e.preventDefault()}};
+  document.addEventListener("keydown",key);
+  cleanup=()=>{clearInterval(iv);document.removeEventListener("keydown",key);if(st)save()};
+  if(!st){newGame("Fácil")}else{draw();clock();if(st.done)checkWinShow()}
+  function checkWinShow(){msg.appendChild(el(`<div class="card stack"><span class="label">Resuelto</span><h2>${st.lv} en ${fmt(st.t)}</h2><p class="muted">Elige un nivel para jugar otro.</p></div>`))}
+}
+/* --- word game --- */
+function palabraView(host){
+  const daily=WORDS[(dayIndex()*7+3)%WORDS.length];
+  let st=S.get("palabra",null);
+  if(!st||(st.mode==="dia"&&st.d!==dayStr()))st={mode:"dia",d:dayStr(),ans:daily[0],rows:[],done:false};
+  let cur="";
+  const head=el(`<div class="row" style="justify-content:space-between"><div class="seg"><button id="m1">Del día</button><button id="m2">Práctica</button></div><span class="small muted">6 intentos</span></div>`);host.appendChild(head);
+  host.appendChild(el(`<p class="muted small">Adivina la palabra en inglés de 5 letras. Verde: letra en su lugar. Amarillo: está en la palabra, en otro lugar.</p>`));
+  const grid=el(`<div class="wg"></div>`);host.appendChild(grid);
+  const msg=el(`<div></div>`);host.appendChild(msg);
+  const kb=el(`<div class="kb"></div>`);host.appendChild(kb);
+  ["qwertyuiop","asdfghjkl","+zxcvbnm-"].forEach(r=>{const row=el(`<div class="kr"></div>`);[...r].forEach(ch=>{const b=document.createElement("button");if(ch==="+"){b.textContent="Enviar";b.className="wide";b.onclick=()=>submit()}else if(ch==="-"){b.textContent="⌫";b.className="wide";b.setAttribute("aria-label","Borrar");b.onclick=()=>{cur=cur.slice(0,-1);draw()}}else{b.textContent=ch;b.dataset.k=ch;b.onclick=()=>typeCh(ch)}row.appendChild(b)});kb.appendChild(row)});
+  head.querySelector("#m1").onclick=()=>{const saved=S.get("palabra_dia",null);st=saved&&saved.d===dayStr()?saved:{mode:"dia",d:dayStr(),ans:daily[0],rows:[],done:false};cur="";persist();draw()};
+  head.querySelector("#m2").onclick=()=>{st={mode:"prac",ans:WORDS[Math.floor(Math.random()*WORDS.length)][0],rows:[],done:false};cur="";persist();draw()};
+  function persist(){S.set("palabra",st);if(st.mode==="dia")S.set("palabra_dia",st)}
+  function typeCh(ch){if(st.done||cur.length>=5)return;cur+=ch;draw()}
+  function score(g,a){const res=Array(5).fill("no"),left={};for(let i=0;i<5;i++){if(g[i]===a[i])res[i]="ok";else left[a[i]]=(left[a[i]]||0)+1}for(let i=0;i<5;i++){if(res[i]!=="ok"&&left[g[i]]){res[i]="near";left[g[i]]--}}return res}
+  function submit(){if(st.done)return;if(cur.length<5){toast("Faltan letras");return}st.rows.push(cur);cur="";if(st.rows[st.rows.length-1]===st.ans||st.rows.length>=6){st.done=true;const won=st.rows[st.rows.length-1]===st.ans;if(won)award("juego",10+(7-st.rows.length)*5);else award("juego",3)}persist();draw()}
+  function draw(){
+    head.querySelector("#m1").setAttribute("aria-pressed",st.mode==="dia");head.querySelector("#m2").setAttribute("aria-pressed",st.mode==="prac");
+    grid.innerHTML="";const keyState={};
+    for(let r=0;r<6;r++){const row=el(`<div class="r"></div>`);const g=st.rows[r];const sc=g?score(g,st.ans):null;for(let k=0;k<5;k++){const d=document.createElement("div");if(g){d.textContent=g[k];d.className="st-"+sc[k];const pr={ok:3,near:2,no:1};if(!keyState[g[k]]||pr[sc[k]]>pr[keyState[g[k]]])keyState[g[k]]=sc[k]}else if(r===st.rows.length&&cur[k]){d.textContent=cur[k];d.className="f"}row.appendChild(d)}grid.appendChild(row)}
+    kb.querySelectorAll("button[data-k]").forEach(b=>{b.className=keyState[b.dataset.k]?"st-"+keyState[b.dataset.k]:""});
+    msg.innerHTML="";if(st.done){const w=WORDS.find(x=>x[0]===st.ans);const won=st.rows[st.rows.length-1]===st.ans;const c=el(`<div class="card stack"><span class="label">${won?"Acertaste en "+st.rows.length:"Era esta"}</span><h2 style="text-transform:uppercase;letter-spacing:.08em">${st.ans}</h2><p>${esc(w?w[1]:"")}</p><button class="btn" id="pl">Jugar práctica</button></div>`);c.querySelector("#pl").onclick=()=>head.querySelector("#m2").click();msg.appendChild(c)}
+  }
+  const key=e=>{if(e.metaKey||e.ctrlKey||e.target.tagName==="TEXTAREA"||e.target.tagName==="INPUT")return;if(/^[a-zA-Z]$/.test(e.key))typeCh(e.key.toLowerCase());else if(e.key==="Enter"){e.preventDefault();submit()}else if(e.key==="Backspace"){cur=cur.slice(0,-1);draw()}};
+  document.addEventListener("keydown",key);cleanup=()=>document.removeEventListener("keydown",key);
+  draw();
+}
+/* --- code breaker --- */
+function codigoView(host){
+  let st=S.get("codigo",null);
+  const fresh=()=>({secret:shuffle([0,1,2,3,4,5,6,7,8,9]).slice(0,4).join(""),rows:[],done:false});
+  if(!st)st=fresh();let cur="";
+  host.appendChild(el(`<p class="muted small">Descubre el código de 4 cifras distintas en 10 intentos. <span style="color:var(--ok)">●</span> cifra correcta en su lugar · <span style="color:var(--near)">○</span> cifra correcta en otro lugar.</p>`));
+  const hist=el(`<div class="code-hist"></div>`);host.appendChild(hist);
+  const curEl=el(`<div class="code-cur"></div>`);host.appendChild(curEl);
+  const np=el(`<div class="numpad"></div>`);host.appendChild(np);
+  const ctl=el(`<div class="row"><button class="btn ghost" id="bk" style="flex:1">Borrar</button><button class="btn" id="ok" style="flex:2">Probar</button></div>`);host.appendChild(ctl);
+  const msg=el(`<div></div>`);host.appendChild(msg);
+  for(const n of [1,2,3,4,5,6,7,8,9,0]){const b=el(`<button>${n}</button>`);b.onclick=()=>{if(st.done||cur.length>=4||cur.includes(String(n)))return;cur+=n;draw()};np.appendChild(b)}
+  ctl.querySelector("#bk").onclick=()=>{cur=cur.slice(0,-1);draw()};
+  ctl.querySelector("#ok").onclick=()=>{if(cur.length<4||st.done)return;let b=0,w=0;for(let i=0;i<4;i++){if(cur[i]===st.secret[i])b++;else if(st.secret.includes(cur[i]))w++}st.rows.push({g:cur,b,w});cur="";if(b===4||st.rows.length>=10){st.done=true;award("juego",b===4?15+(10-st.rows.length)*4:3)}S.set("codigo",st);draw()};
+  function draw(){
+    hist.innerHTML="";st.rows.forEach((r,k)=>{const pegs=Array(r.b).fill("b").concat(Array(r.w).fill("w")).concat(Array(4-r.b-r.w).fill(""));hist.appendChild(el(`<div class="code-row"><span class="small muted">${k+1}</span><span class="d">${r.g}</span><span class="pegs" aria-label="${r.b} en su lugar, ${r.w} en otro lugar">${pegs.map(p=>`<i class="peg ${p}"></i>`).join("")}</span></div>`))});
+    curEl.innerHTML=[0,1,2,3].map(i=>`<div>${cur[i]||""}</div>`).join("");
+    [...np.children].forEach(b=>b.disabled=st.done||cur.includes(b.textContent));
+    curEl.hidden=st.done;np.hidden=st.done;ctl.hidden=st.done;
+    msg.innerHTML="";if(st.done){const won=st.rows[st.rows.length-1].b===4;const c=el(`<div class="card stack"><span class="label">${won?"Descifrado en "+st.rows.length+" intentos":"Sin intentos"}</span><h2>El código era ${st.secret}</h2><p class="muted small">Estrategia: usa los primeros intentos para saber qué cifras están, luego ubícalas.</p><button class="btn" id="nx">Nuevo código</button></div>`);c.querySelector("#nx").onclick=()=>{st=fresh();cur="";S.set("codigo",st);draw()};msg.appendChild(c)}
+  }
+  draw();
+}
+
+/* ============ CLAUDE ============ */
+function renderClaude(){
+  view.appendChild(el(`<div class="stack" style="margin-bottom:18px"><h1>Claude</h1><p class="muted small">Aprende a pedir mejor, practica sin conexión y deja tus prompts listos para mañana.</p></div>`));
+  view.appendChild(segs("claude",[["lecciones","Lecciones"],["quiz","Quiz"],["practica","Reescribe"],["manana","Para mañana"]]));
+  const host=el(`<div class="stack" style="margin-top:18px"></div>`);view.appendChild(host);
+  ({lecciones:leccionesView,quiz:()=>{const q=el("<div></div>");host.appendChild(q);runQuiz(q,CLAUDE_QUIZ,{onDone:()=>award("claude",15)})},practica:practicaView,manana:mananaView})[sub.claude](host);
+}
+function leccionesView(host){
+  const read=S.get("lread",[]);host.appendChild(el(`<p class="muted small">${read.length} de ${LESSONS.length} leídas</p>`));
+  const list=el(`<div class="list"></div>`);host.appendChild(list);
+  LESSONS.forEach((l,k)=>{const b=el(`<button class="item"><span class="tick ${read.includes(k)?"on":""}">${read.includes(k)?"✓":k+1}</span><div class="grow"><div class="t">${esc(l.t)}</div></div><span class="muted">›</span></button>`);b.onclick=()=>{host.innerHTML="";lesson(host,k)};list.appendChild(b)});
+}
+function lesson(host,k){
+  const l=LESSONS[k];const back=el(`<button class="btn ghost" style="align-self:flex-start">‹ Lecciones</button>`);back.onclick=()=>{host.innerHTML="";leccionesView(host)};host.appendChild(back);
+  const c=el(`<article class="card stack"><span class="label">Lección ${k+1} de ${LESSONS.length}</span><h2>${esc(l.t)}</h2><p>${esc(l.b)}</p><div class="lesson-ex"><div class="ex-bad"><span class="label">Antes</span><br>${esc(l.bad)}</div><div class="ex-good"><span class="label">Mejor</span><br>${esc(l.good)}</div></div></article>`);host.appendChild(c);
+  const read=S.get("lread",[]);if(!read.includes(k)){read.push(k);S.set("lread",read);award("claude",10)}
+  const row=el(`<div class="row"><button class="btn ghost" id="sv" style="flex:1">Guardar ejemplo</button>${k+1<LESSONS.length?'<button class="btn" id="nx" style="flex:1">Siguiente</button>':""}</div>`);host.appendChild(row);
+  row.querySelector("#sv").onclick=()=>{addManana("Ejemplo: "+l.t,l.good);toast("Guardado en Para mañana")};
+  const nx=row.querySelector("#nx");if(nx)nx.onclick=()=>{host.innerHTML="";lesson(host,k+1);window.scrollTo(0,0)};
+}
+function practicaView(host){
+  host.appendChild(el(`<p class="muted">Mejora el prompt débil y luego compáralo con un modelo. No hay una sola respuesta correcta.</p>`));
+  const idx=S.get("prac_i",0)%PRACTICE.length;const p=PRACTICE[idx];const drafts=S.get("prac_d",{});
+  const c=el(`<div class="stack"><div class="card stack"><span class="label">Reto ${idx+1} de ${PRACTICE.length}</span><p>${esc(p.sc)}</p><div class="ex-bad">“${esc(p.weak)}”</div></div><textarea id="prac-${idx}" placeholder="Escribe tu versión mejorada…" style="min-height:150px"></textarea><button class="btn full" id="rv">Comparar con el modelo</button><div id="out" class="stack"></div><div class="row"><button class="btn ghost" id="nx" style="flex:1">Otro reto</button></div></div>`);
+  const ta=c.querySelector("textarea");ta.value=drafts[idx]||"";ta.oninput=()=>{const d=S.get("prac_d",{});d[idx]=ta.value;S.set("prac_d",d)};
+  c.querySelector("#rv").onclick=()=>{const out=c.querySelector("#out");out.innerHTML="";const mine=ta.value.trim();
+    out.appendChild(el(`<div class="card stack"><span class="label">Revisa si tu versión incluye</span><div class="checks">${p.keys.map((x,n)=>`<label for="pk-${idx}-${n}"><input type="checkbox" id="pk-${idx}-${n}"><span>${esc(x)}</span></label>`).join("")}</div></div>`));
+    out.appendChild(el(`<div class="ex-good"><span class="label">Una versión modelo</span><br>${esc(p.model)}</div>`));
+    const sv=el(`<button class="btn quiet full">Guardar ${mine?"mi versión":"el modelo"} en Para mañana</button>`);sv.onclick=()=>{addManana("Reto: "+p.weak,mine||p.model);toast("Guardado")};out.appendChild(sv);
+    if(mine.length>30)award("claude",15)};
+  c.querySelector("#nx").onclick=()=>{S.set("prac_i",idx+1);host.innerHTML="";practicaView(host)};
+  host.appendChild(c);
+}
+function addManana(title,text){const m=S.get("manana",[]);m.unshift({id:Date.now(),title,text,d:dayStr()});S.set("manana",m)}
+function mananaView(host){
+  host.appendChild(el(`<p class="muted">Prompts listos para pegar en Claude cuando tengas conexión. Cópialo, ábrelo en Claude y pégalo.</p>`));
+  const form=el(`<div class="card stack"><span class="label">Nuevo prompt</span><input type="text" id="mt" placeholder="Título corto (opcional)"><textarea id="mx" placeholder="Escribe con calma lo que quieres pedirle a Claude…" style="min-height:120px"></textarea><button class="btn" id="ma">Guardar</button></div>`);host.appendChild(form);
+  const mx=form.querySelector("#mx");mx.value=S.get("mdraft","");mx.oninput=()=>S.set("mdraft",mx.value);
+  form.querySelector("#ma").onclick=()=>{const t=mx.value.trim();if(!t){toast("Escribe el prompt primero");return}addManana(form.querySelector("#mt").value.trim()||"Mi prompt",t);S.set("mdraft","");award("claude",5);host.innerHTML="";mananaView(host)};
+  const m=S.get("manana",[]);const list=el(`<div class="stack"></div>`);host.appendChild(list);
+  if(!m.length)list.appendChild(el(`<p class="muted small">Todavía no hay nada guardado. También puedes guardar desde Escribir y hablar o desde las lecciones.</p>`));
+  m.forEach(it=>{const c=el(`<div class="card stack"><div class="row" style="justify-content:space-between"><b>${esc(it.title)}</b><span class="pill">${it.d.slice(5).split("-").reverse().join("/")}</span></div><div class="pre" tabindex="0">${esc(it.text)}</div><div class="row"><button class="btn" data-a="cp" style="flex:2">Copiar</button><button class="btn ghost" data-a="rm" style="flex:1">Quitar</button></div><div class="row confirm" hidden><span class="small muted" style="flex:1">¿Quitar este prompt?</span><button class="btn ghost" data-a="no">No</button><button class="btn" data-a="yes">Sí, quitar</button></div></div>`);
+    c.querySelector('[data-a="cp"]').onclick=()=>copyText(it.text,c.querySelector(".pre"));
+    c.querySelector('[data-a="rm"]').onclick=()=>{c.querySelector(".confirm").hidden=false};
+    c.querySelector('[data-a="no"]').onclick=()=>{c.querySelector(".confirm").hidden=true};
+    c.querySelector('[data-a="yes"]').onclick=()=>{S.set("manana",S.get("manana",[]).filter(x=>x.id!==it.id));c.remove()};
+    list.appendChild(c)});
+}
+
+/* ============ boot ============ */
+window.addEventListener("online",()=>{if(tab==="hoy")render()});window.addEventListener("offline",()=>{if(tab==="hoy")render()});
+chips();go(tab);
+if("serviceWorker" in navigator&&document.querySelector('link[rel="manifest"]')){navigator.serviceWorker.register("sw.js").catch(()=>{})}
+</script>
+
+</body></html>
